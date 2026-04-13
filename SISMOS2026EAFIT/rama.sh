@@ -33,15 +33,15 @@ rsync -av --delete \
     --exclude='data/'          \
     "$SOURCE_DIR/" "$TARGET_DIR/"
 
-# 2. Operaciones de Git
-echo -e "${BLUE}▶ Preparando commit...${NC}"
-git add .
+# 2. Operaciones de Git — SOLO carpeta SISMOS2026EAFIT (no tocar otros proyectos del repo)
+echo -e "${BLUE}▶ Preparando commit (solo SISMOS2026EAFIT/)...${NC}"
+git add SISMOS2026EAFIT/
 
 # Verificar si hay cambios antes de hacer commit
 if git diff --cached --quiet; then
-    echo -e "${YELLOW}ℹ No hay cambios nuevos detectados.${NC}"
+    echo -e "${YELLOW}ℹ No hay cambios nuevos en SISMOS2026EAFIT/.${NC}"
 else
-    COMMIT_MSG="Visor Cartográfico: Actualización automática $(date '+%Y-%m-%d %H:%M:%S')"
+    COMMIT_MSG="SISMOS2026EAFIT: Actualización $(date '+%Y-%m-%d %H:%M')"
     git commit -m "$COMMIT_MSG"
     echo -e "${GREEN}✓ Archivos comprometidos localmente.${NC}"
 fi
