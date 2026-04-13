@@ -9,8 +9,6 @@ CTeI_CAPITAL/
 CTeI_CAPITAL (Copiar)/
 ciclobeta/
 
-# --- Datos geográficos pesados (>100MB, se guardan solo localmente) ---
-SISMOS2026EAFIT/data/
 
 # --- Python ---
 __pycache__/
