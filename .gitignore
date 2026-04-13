@@ -1,0 +1,25 @@
+# ==============================================================================
+# .gitignore — Repositorio PROYECTOS (evalenciEAFIT/PROYECTOS)
+# Solo se versiona lo que está explícitamente en el repositorio.
+# Los demás proyectos locales se mantienen SOLO en la máquina de trabajo.
+# ==============================================================================
+
+# --- Proyectos que NO se suben a este repo (tienen su propio repositorio) ---
+CTeI_CAPITAL/
+CTeI_CAPITAL (Copiar)/
+ciclobeta/
+
+# --- Datos geográficos pesados (>100MB, se guardan solo localmente) ---
+SISMOS2026EAFIT/data/
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+.pytest_cache/
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db
