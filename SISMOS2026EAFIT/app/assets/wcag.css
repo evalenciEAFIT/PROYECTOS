@@ -1,0 +1,18 @@
+/* wcag.css - Estilos específicos de accesibilidad WCAG 2.1 */
+
+body.high-contrast-mode {
+    filter: invert(100%) hue-rotate(180deg) contrast(150%) !important;
+    background-color: #fff !important;
+}
+
+body.high-contrast-mode .leaflet-container {
+    filter: invert(100%) hue-rotate(180deg) brightness(1.2) contrast(1.2) !important;
+    /* Al invertir un mapa invertido obtenemos un alto contraste mejorado del mapa original sin colores raros */
+}
+
+/* Enhancements for buttons visually */
+.btn-wcag:focus-visible {
+    outline: 3px solid #ffcc00 !important;
+    outline-offset: 2px !important;
+    border-radius: 4px;
+}

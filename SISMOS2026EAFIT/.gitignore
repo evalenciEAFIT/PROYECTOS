@@ -1,0 +1,24 @@
+# ==============================================================================
+# .gitignore — SISMOS2026EAFIT (Visor Cartográfico)
+# Los datos geográficos son pesados (>200MB) y se mantienen fuera del repo.
+# Solo se versiona el código fuente.
+# ==============================================================================
+
+# --- Datos Geográficos (NO subir a GitHub, son muy pesados) ---
+data/
+
+# --- Python ---
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.env
+*.egg-info/
+dist/
+build/
+
+# --- Sistema ---
+.DS_Store
+Thumbs.db

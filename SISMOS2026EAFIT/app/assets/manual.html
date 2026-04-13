@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Uso - Visor Cartográfico DAGRAN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --primary-navy: #0a2240;
+            --secondary-gold: #f5c800;
+            --accent-blue: #0284c7;
+            --bg-light: #f8f9fa;
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --sidebar-width: 300px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.7;
+            color: var(--text-dark);
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Navigation within Manual */
+        .manual-sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--primary-navy);
+            /* Color update */
+            padding: 40px 30px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+            display: none;
+            /* Mobile first hidden */
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        @media screen and (min-width: 1024px) {
+            .manual-sidebar {
+                display: block;
+            }
+
+            .content {
+                margin-left: 0;
+                width: auto;
+            }
+        }
+
+        .content {
+            flex: 1;
+            padding: 60px 80px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            background: var(--primary-navy);
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(10, 34, 64, 0.2);
+            margin-bottom: 2rem;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            background: var(--secondary-gold);
+            color: var(--primary-navy);
+        }
+
+        /* Typography */
+        h1 {
+            color: var(--primary-navy);
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
+        .subtitle {
+            font-size: 1.35rem;
+            color: #555;
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        h2 {
+            color: var(--primary-navy);
+            font-size: 2rem;
+            margin-top: 5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid var(--secondary-gold);
+            /* More color */
+            scroll-margin-top: 100px;
+        }
+
+        h3 {
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+            margin-top: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #e0f2fe;
+            /* Light colorful background */
+            padding: 10px 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--accent-blue);
+        }
+
+        h3 i {
+            color: var(--primary-navy);
+        }
+
+        p,
+        li {
+            font-size: 1.05rem;
+            color: #374151;
+        }
+
+        /* Sidebar Links in Manual */
+        .toc-link {
+            display: block;
+            padding: 12px 15px;
+            color: rgba(255, 255, 255, 0.7);
+            /* Light text on dark bg */
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+            border-radius: 6px;
+            margin-bottom: 5px;
+        }
+
+        .toc-link:hover,
+        .toc-link.active {
+            color: var(--primary-navy);
+            background-color: var(--secondary-gold);
+            padding-left: 20px;
+            border-bottom: none;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 3rem;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .logo-img {
+            max-width: 100%;
+            width: 180px;
+            /* Larger Logo */
+            height: auto;
+        }
+
+        /* Images and Figures */
+        .figure {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            margin: 40px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .figure img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .figcaption {
+            margin-top: 15px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Note callouts */
+        .callout {
+            background-color: #f0f9ff;
+            border-left: 4px solid var(--accent-blue);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        .callout i {
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+        }
+
+        /* Menu Hierarchy Visualizer */
+        .menu-tree {
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            font-family: monospace;
+            margin: 20px 0;
+        }
+
+        .menu-item {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .menu-sub {
+            margin-left: 25px;
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        /* Accordion for FAQ */
+        details {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        summary::after {
+            content: '\ea13';
+            /* chevron-down in boxicons */
+            font-family: 'boxicons';
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+
+        details[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .faq-content {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layout">
+        <!-- Manual Navigation Sidebar -->
+        <nav class="manual-sidebar">
+            <div class="logo-container">
+                <img src="logo.png" class="logo-img" alt="Logo">
+            </div>
+            <a href="#inicio" class="toc-link">1. Inicio</a>
+            <a href="#navegacion" class="toc-link">2. Navegación en el Sistema</a>
+            <a href="#modelo-exposicion" class="toc-link">3. Modelo de Exposición</a>
+            <a href="#evaluacion-probabilistica" class="toc-link">4. Evaluación Probabilística</a>
+            <a href="#escenarios-riesgo" class="toc-link">5. Escenarios de Riesgo</a>
+            <a href="#preguntas-frecuentes" class="toc-link">6. Preguntas Frecuentes</a>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content">
+            <a href="/" class="back-btn"><i class='bx bx-arrow-back'></i> Volver a la Aplicación</a>
+
+            <section id="inicio">
+                <h1>Manual de Usuario</h1>
+                <p class="subtitle">Guía oficial para la navegación e interpretación del Visor Cartográfico de Riesgo
+                    Sísmico de Antioquia.</p>
+
+                <div class="callout">
+                    <i class='bx bx-info-circle'></i>
+                    <div>
+                        <strong>¿Qué es esta herramienta?</strong>
+                        <p style="margin: 0.5rem 0 0 0;">Una plataforma web que permite a técnicos y tomadores de
+                            decisiones consultar el riesgo sísmico del departamento, desde el detalle de cada manzana
+                            hasta cifras agregadas municipales.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="navegacion">
+                <h2>2. Navegación en el Sistema</h2>
+
+                <h3>El Menú Lateral</h3>
+                <p>La aplicación está organizada en un menú lateral jerárquico. A continuación se describe la estructura
+                    exacta que encontrará:</p>
+
+                <div class="menu-tree">
+                    <div class="menu-item"><i class='bx bx-map-alt'></i> 1. MODELO DE EXPOSICIÓN</div>
+                    <div class="menu-sub">├─ Exposición (Mapa Principal)</div>
+                    <div class="menu-sub">└─ Análisis de la exposición (Dashboard)</div>
+
+                    <div class="menu-item" style="margin-top: 15px;"><i class='bx bx-bar-chart-square'></i> 2.
+                        EVALUACIÓN PROBABILÍSTICA</div>
+                    <div class="menu-sub">2.1. Curvas de excedencia</div>
+                    <div class="menu-sub" style="margin-left: 45px;">├─ Pérdida económica</div>
+                    <div class="menu-sub" style="margin-left: 45px;">├─ Afectaciones humanas</div>
+                    <div class="menu-sub" style="margin-left: 45px;">└─ Daño completo</div>
+
+                    <div class="menu-sub" style="margin-top: 8px;">2.2. Afectaciones (municipio)</div>
+                    <div class="menu-sub link" style="margin-left: 45px;">└─ Afectaciones anuales promedio...</div>
+
+                    <div class="menu-sub" style="margin-top: 8px;">2.3. Afectaciones (manzana)</div>
+                    <div class="menu-sub link" style="margin-left: 45px;">└─ Afectaciones anuales promedio...</div>
+
+                    <div class="menu-item" style="margin-top: 15px;"><i class='bx bx-pulse'></i> 3. ESCENARIOS DE RIESGO
+                    </div>
+                    <div class="menu-sub">3.1. Escenario 1 (R1)</div>
+                    <div class="menu-sub" style="margin-left: 45px;">├─ Ubicación del escenario</div>
+                    <div class="menu-sub" style="margin-left: 45px;">├─ Afectaciones promedio (municipio)</div>
+                    <div class="menu-sub" style="margin-left: 45px;">└─ Afectaciones promedio (manzana)</div>
+                    <div class="menu-sub">3.2. Escenario 2 (R2)</div>
+                    <div class="menu-sub" style="margin-left: 45px;">└─ (Misma estructura R1)</div>
+                </div>
+
+                <h3>Paso Crítico: Seleccionar Municipio</h3>
+                <p>Al ingresar, la aplicación carga en modo general. Para visualizar datos y activar los módulos de
+                    detalle, <strong>es obligatorio seleccionar un municipio</strong> en la barra superior.</p>
+
+                <div class="figure">
+                    <img src="manual_main.png" alt="Selector de municipios">
+                    <div class="figcaption">El selector se encuentra en la parte superior izquierda. Escriba el nombre
+                        (ej. Abriaquí) para cargar los datos.</div>
+                </div>
+            </section>
+
+            <section id="modelo-exposicion">
+                <h2>3. Modelo de Exposición</h2>
+                <p>Este módulo responde a la pregunta: <em>¿Qué hay en el territorio y cuánto vale?</em></p>
+
+                <h3>3.1. Mapa Interactivo</h3>
+                <p>Permite colorear las manzanas según diferentes variables usando el selector lateral "Seleccionar
+                    variable":</p>
+                <ul>
+                    <li><strong>Variables Generales:</strong> Valor de Reposición, Número de Edificios, Ocupantes.</li>
+                    <li><strong>Pisos:</strong> Altura de las edificaciones (1, 2-3, 4-5 pisos, etc.).</li>
+                    <li><strong>Taxonomía:</strong> Tipo de material (Mampostería confinada, Madera, Bahareque, etc.).
+                    </li>
+                </ul>
+
+                <h3>3.2. Dashboard de Análisis</h3>
+                <p>Accesible desde el menú <em>"Análisis de la exposición"</em>. Ofrece un resumen estadístico completo.
+                </p>
+                <div class="figure">
+                    <img src="manual_analisis.png" alt="Dashboard de análisis">
+                    <div class="figcaption">Dashboard con tarjetas de totales y gráficos de barras por tipología y
+                        altura.</div>
+                </div>
+
+                <h3>3.3. Detalle de Manzana</h3>
+                <p>Al seleccionar una fila de la tabla de datos, se despliega un panel de detalle que incluye un mapa
+                    geográfico de la manzana seleccionada y gráficos específicos de sus características.</p>
+                <div class="figure">
+                    <img src="manual_analisis_manzana.png" alt="Detalle de manzana con mapa">
+                    <div class="figcaption">Visualización detallada de la manzana seleccionada con su ubicación
+                        geográfica y distribuciones específicas.</div>
+                </div>
+            </section>
+
+            <section id="evaluacion-probabilistica">
+                <h2>4. Evaluación Probabilística</h2>
+                <p>Estima los daños futuros posibles basados en modelos matemáticos de riesgo.</p>
+
+                <h3>4.1. Curvas de Excedencia</h3>
+                <p>Accesibles en el menú 2.1. Son gráficas que muestran la relación entre la magnitud de un daño y su
+                    probabilidad anual.</p>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="figure" style="margin: 0;">
+                        <img src="manual_loss.png" alt="Pérdidas Económicas">
+                        <div class="figcaption">Pérdida Económica (en Millones de Pesos)</div>
+                    </div>
+                    <div class="figure" style="margin: 0;">
+                        <img src="manual_human_loss.png" alt="Afectaciones Humanas">
+                        <div class="figcaption">Víctimas y Desplazados</div>
+                    </div>
+                </div>
+
+                <h3>4.2. Mapas de Calor (Afectaciones)</h3>
+                <p>Disponibles en el menú 2.3como <em>"Afectaciones anuales promedio a nivel de manzana"</em>. Muestran
+                    geográficamente dónde se espera el mayor impacto acumulado.</p>
+                <div class="figure">
+                    <img src="manual_spatial.png" alt="Mapa de calor">
+                    <div class="figcaption">Zonas rojas indican mayor concentración de pérdidas esperadas anuales.</div>
+                </div>
+            </section>
+
+            <section id="escenarios-riesgo">
+                <h2>5. Escenarios de Riesgo</h2>
+                <p>Este módulo presenta el análisis de consecuencias para escenarios sísmicos específicos
+                    (deterministas), como R1 (Sismo Fuerte) y R2 (Sismo Moderado).</p>
+
+                <h3>5.1. Ubicación del Escenario</h3>
+                <p>Visualice el epicentro sísmico y la propagación de ondas en el mapa regional. Panel lateral incluye
+                    controles de capas.</p>
+                <div class="figure">
+                    <img src="manual_escenario_ubicacion.png" alt="Mapa de ubicación del escenario">
+                    <div class="figcaption">Mapa de localización del evento sísmico con anillos de propagación.</div>
+                </div>
+
+                <h3>5.2. Afectaciones Promedio (Municipio)</h3>
+                <p>Resumen ejecutivo de los daños esperados a nivel municipal para el escenario seleccionado.</p>
+                <div class="figure">
+                    <img src="manual_escenario_municipio.png" alt="KPIs del escenario">
+                    <div class="figcaption">Indicadores clave de impacto: Pérdidas económicas, humanas y daños físicos.
+                    </div>
+                </div>
+
+                <h3>5.3. Afectaciones Promedio (Manzana)</h3>
+                <p>Visualización espacial detallada del impacto distribuido manzana por manzana.</p>
+                <div class="figure">
+                    <img src="manual_escenario_manzana.png" alt="Mapa de afectaciones por manzana">
+                    <div class="figcaption">Mapa de calor (choropleth) indicando la intensidad del daño por manzana.
+                    </div>
+                </div>
+            </section>
+
+            <section id="preguntas-frecuentes">
+                <h2>6. Preguntas Frecuentes</h2>
+
+                <details>
+                    <summary>¿Qué significa TA_M o MC_M?</summary>
+                    <div class="faq-content">
+                        Son códigos de ingeniería para los materiales de construcción:
+                        <ul>
+                            <li><strong>MC_M:</strong> Mampostería Confinada (Ladrillo con vigas).</li>
+                            <li><strong>TA_M:</strong> Tapia Pisada (Barro compactado).</li>
+                            <li><strong>BQ_M:</strong> Bahareque (Madera y barro).</li>
+                        </ul>
+                    </div>
+                </details>
+
+                <details>
+                    <summary>¿Por qué no puedo descargar los datos?</summary>
+                    <div class="faq-content">
+                        La funcionalidad de descarga directa está deshabilitada en esta versión de visualización pública
+                        para proteger la integridad de la base de datos oficial.
+                    </div>
+                </details>
+
+                <details>
+                    <summary>El mapa se ve negro o vacío</summary>
+                    <div class="faq-content">
+                        Asegúrese de haber seleccionado un "Municipio" en la barra superior. Si no hay municipio
+                        seleccionado, el sistema no carga capas de detalle para no saturar la memoria del navegador.
+                    </div>
+                </details>
+            </section>
+
+            <footer
+                style="margin-top: 80px; padding-top: 20px; border-top: 1px solid #e2e8f0; text-align: center; color: #94a3b8; font-size: 0.9rem;">
+                <p>&copy; 2026 Gobernación de Antioquia / DAGRAN - Universidad EAFIT</p>
+            </footer>
+        </main>
+    </div>
+</body>
+
+</html>

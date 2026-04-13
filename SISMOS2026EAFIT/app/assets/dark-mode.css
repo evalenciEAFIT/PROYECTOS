@@ -1,0 +1,569 @@
+/* =============================================================================
+   DARK MODE - VISOR CARTOGRÁFICO
+   =============================================================================
+   Sistema completo de modo oscuro con paleta DAGRAN adaptada.
+   Respeta la preferencia del sistema y permite toggle manual.
+============================================================================= */
+
+/* =============================================================================
+   VARIABLES DE COLOR - DARK MODE
+============================================================================= */
+
+:root[data-theme="dark"] {
+    /* Colores principales DAGRAN adaptados */
+    --dagran-navy: #2d4a6f;              /* Navy más claro para fondos oscuros */
+    --dagran-navy-light: rgba(45, 74, 111, 0.15);
+    --dagran-navy-hover: #3a5a85;
+    --dagran-gold: #ffd700;              /* Gold más brillante */
+    --dagran-gold-light: rgba(255, 215, 0, 0.15);
+    --dagran-gold-hover: #ffed4e;
+    
+    /* Fondos */
+    --bg-primary: #0f1419;               /* Fondo principal (casi negro) */
+    --bg-secondary: #1a1f26;             /* Fondo secundario (gris muy oscuro) */
+    --bg-tertiary: #242b35;              /* Fondo terciario (gris oscuro) */
+    --bg-elevated: #2d3748;              /* Elementos elevados (cards) */
+    
+    /* Textos */
+    --text-primary: #e4e6eb;             /* Texto principal (blanco suave) */
+    --text-secondary: #b0b3b8;           /* Texto secundario (gris claro) */
+    --text-tertiary: #8a8d91;            /* Texto terciario (gris medio) */
+    --text-muted: #65676b;               /* Texto apagado */
+    
+    /* Bordes y separadores */
+    --border-color: #3a3f4a;
+    --border-color-light: #2d3748;
+    --divider-color: rgba(255, 255, 255, 0.1);
+    
+    /* Sombras */
+    --shadow-soft: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.6);
+    --shadow-elevated: 0 20px 40px rgba(0, 0, 0, 0.8);
+    
+    /* Glass effect */
+    --glass-bg: rgba(26, 31, 38, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    
+    /* Estados */
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --info-color: #3b82f6;
+    
+    /* Overlay */
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+}
+
+/* =============================================================================
+   APLICACIÓN DE DARK MODE
+============================================================================= */
+
+/* Body y elementos base */
+:root[data-theme="dark"] body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Contenedores principales */
+:root[data-theme="dark"] .dashboard-container,
+:root[data-theme="dark"] .page-container {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* =============================================================================
+   SIDEBAR
+============================================================================= */
+
+:root[data-theme="dark"] .sidebar {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-elevated);
+}
+
+:root[data-theme="dark"] .sidebar-header {
+    color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .menu-item {
+    color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .menu-item:hover {
+    color: var(--text-primary);
+    background: var(--dagran-gold-light);
+}
+
+:root[data-theme="dark"] .menu-item.active {
+    background: var(--dagran-navy-light);
+    color: var(--dagran-gold);
+    border-left: 3px solid var(--dagran-gold);
+}
+
+:root[data-theme="dark"] .menu-item i {
+    color: var(--text-tertiary);
+}
+
+:root[data-theme="dark"] .menu-item:hover i,
+:root[data-theme="dark"] .menu-item.active i {
+    color: var(--dagran-gold);
+}
+
+:root[data-theme="dark"] .nav-footer {
+    border-top: 1px solid var(--border-color);
+}
+
+/* =============================================================================
+   CARDS Y PANELES
+============================================================================= */
+
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .chart-card,
+:root[data-theme="dark"] .stat-card {
+    background-color: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft);
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .hover-card:hover {
+    box-shadow: var(--shadow-hover);
+    border-color: var(--dagran-gold);
+}
+
+:root[data-theme="dark"] .glass-panel {
+    background: var(--glass-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+:root[data-theme="dark"] .float-pill,
+:root[data-theme="dark"] .float-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+}
+
+/* =============================================================================
+   TABLAS
+============================================================================= */
+
+:root[data-theme="dark"] .modern-table {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-elevated);
+}
+
+:root[data-theme="dark"] .modern-table thead th {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 2px solid var(--border-color);
+}
+
+:root[data-theme="dark"] .modern-table tbody td {
+    border-bottom: 1px solid var(--border-color-light);
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .modern-table tbody tr:hover {
+    background-color: var(--bg-tertiary);
+}
+
+/* Dash DataTable */
+:root[data-theme="dark"] .dash-table-container {
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .dash-table-container .dash-spreadsheet-container {
+    background-color: var(--bg-elevated);
+}
+
+:root[data-theme="dark"] .dash-table-container .dash-header {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .dash-table-container .dash-cell {
+    background-color: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color-light);
+}
+
+:root[data-theme="dark"] .dash-table-container .dash-cell:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+/* =============================================================================
+   BOTONES
+============================================================================= */
+
+:root[data-theme="dark"] .btn-dagran-primary {
+    background-color: var(--dagran-gold);
+    color: var(--bg-primary);
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
+:root[data-theme="dark"] .btn-dagran-primary:hover {
+    background-color: var(--dagran-gold-hover);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.6);
+}
+
+:root[data-theme="dark"] .btn-dagran-icon {
+    background-color: var(--dagran-gold-light);
+    color: var(--dagran-gold);
+}
+
+:root[data-theme="dark"] .btn-dagran-icon:hover {
+    background-color: var(--dagran-gold);
+    color: var(--bg-primary);
+}
+
+:root[data-theme="dark"] button,
+:root[data-theme="dark"] .btn {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+:root[data-theme="dark"] button:hover,
+:root[data-theme="dark"] .btn:hover {
+    background-color: var(--bg-elevated);
+    border-color: var(--dagran-gold);
+}
+
+/* =============================================================================
+   INPUTS Y DROPDOWNS
+============================================================================= */
+
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+:root[data-theme="dark"] input:focus,
+:root[data-theme="dark"] select:focus,
+:root[data-theme="dark"] textarea:focus {
+    border-color: var(--dagran-gold);
+    box-shadow: 0 0 0 2px var(--dagran-gold-light);
+}
+
+/* Dash Dropdown */
+:root[data-theme="dark"] .Select-control {
+    background-color: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .Select-placeholder {
+    color: var(--text-tertiary) !important;
+}
+
+:root[data-theme="dark"] .Select-value-label {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .Select-menu-outer {
+    background-color: var(--bg-elevated) !important;
+    border: 1px solid var(--border-color) !important;
+    box-shadow: var(--shadow-hover);
+}
+
+:root[data-theme="dark"] .Select-option {
+    background-color: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .Select-option:hover {
+    background-color: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .Select-option.is-selected {
+    background-color: var(--dagran-navy-light) !important;
+    color: var(--dagran-gold) !important;
+}
+
+/* =============================================================================
+   TOOLTIPS
+============================================================================= */
+
+:root[data-theme="dark"] .dagran-tooltip .tooltip-inner {
+    background-color: var(--bg-elevated) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--dagran-gold);
+    box-shadow: var(--shadow-elevated);
+}
+
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-end .tooltip-arrow::before,
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
+    border-right-color: var(--bg-elevated) !important;
+}
+
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-start .tooltip-arrow::before,
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
+    border-left-color: var(--bg-elevated) !important;
+}
+
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-top .tooltip-arrow::before,
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
+    border-top-color: var(--bg-elevated) !important;
+}
+
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-bottom .tooltip-arrow::before,
+:root[data-theme="dark"] .dagran-tooltip.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
+    border-bottom-color: var(--bg-elevated) !important;
+}
+
+/* Leaflet tooltips */
+:root[data-theme="dark"] .custom-tooltip {
+    background-color: var(--bg-elevated) !important;
+    border: 1px solid var(--dagran-gold) !important;
+    box-shadow: var(--shadow-elevated) !important;
+}
+
+:root[data-theme="dark"] .tooltip-header {
+    background-color: var(--dagran-navy-light);
+    border-bottom: 1px solid var(--dagran-gold);
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .tooltip-body {
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] .tooltip-label {
+    color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .tooltip-value {
+    color: var(--text-primary);
+}
+
+/* =============================================================================
+   MODALES
+============================================================================= */
+
+:root[data-theme="dark"] .modal-overlay {
+    background: var(--overlay-bg);
+}
+
+:root[data-theme="dark"] .modal-content {
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-elevated);
+}
+
+:root[data-theme="dark"] .close-button {
+    color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .close-button:hover {
+    color: var(--dagran-gold);
+}
+
+/* =============================================================================
+   FOOTER
+============================================================================= */
+
+:root[data-theme="dark"] .app-footer {
+    background-color: var(--glass-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+}
+
+/* =============================================================================
+   TÍTULOS Y TEXTOS
+============================================================================= */
+
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] h5,
+:root[data-theme="dark"] h6 {
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] p {
+    color: var(--text-secondary);
+}
+
+:root[data-theme="dark"] .text-navy {
+    color: var(--dagran-gold) !important; /* Invertir para contraste */
+}
+
+:root[data-theme="dark"] .text-gold {
+    color: var(--dagran-gold) !important;
+}
+
+/* =============================================================================
+   ALERTAS
+============================================================================= */
+
+:root[data-theme="dark"] .dagran-alert {
+    background-color: var(--dagran-gold-light);
+    color: var(--dagran-gold);
+    border: 1px solid var(--dagran-gold);
+}
+
+:root[data-theme="dark"] .alert {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+/* =============================================================================
+   GRÁFICOS PLOTLY
+============================================================================= */
+
+:root[data-theme="dark"] .plotly-graph-div {
+    background-color: transparent !important;
+}
+
+/* Los colores de gráficos se manejan dinámicamente en Python */
+
+/* =============================================================================
+   SCROLLBARS
+============================================================================= */
+
+:root[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--bg-tertiary);
+    border-radius: 5px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--dagran-gold);
+}
+
+/* Firefox */
+:root[data-theme="dark"] * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-tertiary) var(--bg-secondary);
+}
+
+/* =============================================================================
+   TRANSICIONES SUAVES
+============================================================================= */
+
+/* Transición suave al cambiar de tema */
+body,
+.sidebar,
+.card,
+.chart-card,
+.stat-card,
+.modern-table,
+.dash-table-container,
+button,
+input,
+select,
+.Select-control,
+.modal-content,
+.app-footer {
+    transition: background-color 0.3s ease,
+                color 0.3s ease,
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* =============================================================================
+   PREFERENCIA DEL SISTEMA
+============================================================================= */
+
+/* Aplicar dark mode automáticamente si el sistema lo prefiere */
+@media (prefers-color-scheme: dark) {
+    /* Las reglas se aplican solo si no hay override manual */
+    /* El JavaScript manejará esta lógica */
+}
+
+/* =============================================================================
+   TOGGLE BUTTON ESPECÍFICO
+============================================================================= */
+
+.theme-toggle {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background-color: var(--bg-tertiary);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 2px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+}
+
+.theme-toggle::before {
+    content: '☀️';
+    position: absolute;
+    left: 5px;
+    font-size: 1.2rem;
+    transition: opacity 0.3s ease;
+}
+
+.theme-toggle::after {
+    content: '🌙';
+    position: absolute;
+    right: 5px;
+    font-size: 1.2rem;
+    opacity: 0.3;
+    transition: opacity 0.3s ease;
+}
+
+.theme-toggle-slider {
+    width: 22px;
+    height: 22px;
+    background-color: var(--dagran-gold);
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+    background-color: var(--dagran-navy);
+}
+
+:root[data-theme="dark"] .theme-toggle::before {
+    opacity: 0.3;
+}
+
+:root[data-theme="dark"] .theme-toggle::after {
+    opacity: 1;
+}
+
+:root[data-theme="dark"] .theme-toggle-slider {
+    transform: translateX(30px);
+}
+
+/* =============================================================================
+   ACCESIBILIDAD
+============================================================================= */
+
+/* Asegurar contraste suficiente en dark mode */
+:root[data-theme="dark"] *:focus-visible {
+    outline: 3px solid var(--dagran-gold);
+    outline-offset: 2px;
+}
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
+    :root[data-theme="dark"] {
+        --text-primary: #ffffff;
+        --bg-primary: #000000;
+        --border-color: #ffffff;
+    }
+}
