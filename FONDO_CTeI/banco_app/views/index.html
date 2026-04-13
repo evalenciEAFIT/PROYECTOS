@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fondo CTeI - Gestión</title>
+    <meta name="description" content="Dashboard para la gestión de fondos CTeI (Ingresos y Egresos)">
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- MSAL Browser para Azure SSO -->
+    <script src="https://alcdn.msauth.net/browser/2.32.1/js/msal-browser.min.js"></script>
+</head>
+
+<body>
+    <!-- Background Animated Blobs for Glassmorphism -->
+    <div class="bg-blobs">
+        <div class="blob-1"></div>
+        <div class="blob-2"></div>
+        <div class="blob-3"></div>
+    </div>
+
+    <!-- Login Mask -->
+    <div class="login-overlay active" id="loginOverlay">
+        <div class="modal login-box">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <div class="login-brand-logo">
+                    <div class="logo-eafit-ctei login-logo-eafit-ctei">
+                        <div class="logo-eafit" style="color: var(--accent-color);">EAFIT</div>
+                        <div class="logo-ctei-row">
+                            <span class="logo-es">es</span>
+                            <span class="logo-ctei">CTeI</span>
+                        </div>
+                    </div>
+                </div>
+                <h2 style="font-size: 24px; color: var(--text-primary); margin-top: 10px;">Fondo CTeI</h2>
+                <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Ingresa a tu cuenta para
+                    gestionar tus fondos.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="loginEmail">Usuario (@eafit)</label>
+                <input type="text" id="loginEmail" class="form-control" placeholder="admin o usuario@eafit.edu.co"
+                    autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Contraseña</label>
+                <div style="position: relative;">
+                    <input type="password" id="loginPassword" class="form-control" placeholder="•••" style="padding-right: 40px;">
+                    <button type="button" id="togglePasswordBtn" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 4px; display: flex; align-items: center; justify-content: center;" onclick="const input = document.getElementById('loginPassword'); const icon = document.getElementById('eyeIconPath'); if (input.type === 'password') { input.type = 'text'; icon.setAttribute('d', 'M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22'); } else { input.type = 'password'; icon.setAttribute('d', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z'); }">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path id="eyeIconPath" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <small style="color: var(--text-muted); display: block; margin-top: 6px;">Usa su contraseña para ingresar.</small>
+            </div>
+
+            <button class="btn-primary" id="loginBtn"
+                style="width: 100%; margin-top: 8px; padding: 14px; font-size: 15px;">Ingresar</button>
+
+            <div style="display: flex; align-items: center; margin: 18px 0;">
+                <div style="flex: 1; height: 1px; background: var(--panel-border);"></div>
+                <div style="padding: 0 10px; color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase;">O ingresa con el directorio</div>
+                <div style="flex: 1; height: 1px; background: var(--panel-border);"></div>
+            </div>
+
+            <button type="button" id="azureLoginBtn" style="width: 100%; padding: 12px; font-size: 14px; font-weight: 600; color: #1e40af; border: 1px solid rgba(59, 130, 246, 0.3); background: rgba(59, 130, 246, 0.08); border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.background='rgba(59, 130, 246, 0.15)';" onmouseout="this.style.background='rgba(59, 130, 246, 0.08)';">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
+                </svg>
+                Ingresar con EAFIT Microsoft
+            </button>
+
+            <p id="loginError"
+                style="color: var(--expense-color); font-size: 13px; text-align: center; margin-top: 16px; display: none;">
+            </p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand-logo">
+            <div class="logo-eafit-ctei">
+                <div class="logo-eafit">EAFIT</div>
+                <div class="logo-ctei-row">
+                    <span class="logo-es">es</span>
+                    <span class="logo-ctei">CTeI</span>
+                </div>
+            </div>
+            <div class="logo-subtitle">Fondo CTeI</div>
+        </div>
+
+        <ul class="nav-links">
+            <!-- Principal -->
+            <li class="nav-section-label">Principal</li>
+            <li>
+                <a href="#" class="active" id="navResumen" title="Ver el cuadro general y gráficos de estado"
+                    onclick="window.showSection&&window.showSection('resumen');return false;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    Resumen
+                </a>
+            </li>
+
+            <!-- Análisis -->
+            <li class="nav-section-label" id="navAnalisisLabel" style="display:none;">Análisis</li>
+            <li id="navMovimientosItem" style="display:none;">
+                <a href="#" id="navMovimientosLink" title="Listado completo de ingresos y egresos"
+                    onclick="window.showSection&&window.showSection('movimientos');return false;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                        <line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                    Movimientos
+                </a>
+            </li>
+            <li id="navInformeItem" style="display:none;">
+                <a href="#" id="navInformeLink" title="Reporte analítico global de dependencias"
+                    onclick="window.showSection&&window.showSection('informe');return false;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    Informe de Dependencias
+                </a>
+            </li>
+            <li id="navAprobacionesItem" style="display:none;">
+                <a href="#" id="navAprobacionesLink" title="Panel de revisión y gestión de trámites"
+                    onclick="window.showSection&&window.showSection('aprobaciones');return false;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <polyline points="9 12 11 14 15 10"/>
+                    </svg>
+                    Gestionar Egresos
+                </a>
+            </li>
+            <li id="navCrearCuentaItem" style="display:none;">
+                <a href="#" id="menuCrearCuenta" title="Gestionar y crear cuentas en el sistema">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line>
+                    </svg>
+                    Gestionar Cuentas
+                </a>
+            </li>
+            
+            <li id="navEditCatsItem" style="display:none;">
+                <a href="#" id="menuEditCats" title="Personalizar categorías operativas">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    Categorías (Admin)
+                </a>
+            </li>
+
+            <li id="navBackupItem" style="display:none; margin-top:24px;">
+                <a href="/api/backup-db" target="_blank" title="Descargar copia de seguridad (database) local" style="color:#d1fae5; background:rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Respaldar Base de Datos
+                </a>
+            </li>
+
+            <li id="navAyudaItem" style="display:none;">
+                <a href="#" id="navAyudaLink" title="Manual de usuario e instrucciones"
+                    onclick="window.showSection&&window.showSection('ayuda');return false;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" style="margin-right:10px;flex-shrink:0;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Manual de Uso
+                </a>
+            </li>
+            
+            <li id="navLogout" style="display:none;">
+                <a href="#"> </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="header">
+            <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-start;">
+                <img src="/Monoliticos-Vicerrectoria_Azul.png" alt="Vicerrectoría Logo" style="height: 48px; object-fit: contain;">
+                <h1>Panel de Control Financiero</h1>
+            </div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div class="profile-section" id="avatarWrapper" style="position:relative; cursor:default;" title="Usuario">
+                    <span style="color: var(--text-secondary); font-size: 15px; font-weight: 500; padding-left: 8px; user-select: none;"
+                        id="userNameDisplay">Usuario</span>
+                    <div id="userAvatar" class="profile-avatar">
+                        U
+                    </div>
+                </div>
+                <button id="dropdownLogout" style="display: flex; align-items: center; gap: 8px; padding: 10px 18px; font-size: 14.5px; font-weight: 600; color: var(--expense-color); border: 1px solid rgba(192,57,43,0.25); background: transparent; border-radius: 40px; cursor: pointer; transition: all 0.2s; white-space: nowrap;" onmouseover="this.style.background='var(--expense-bg)'; this.style.borderColor='rgba(192,57,43,0.4)';" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(192,57,43,0.25)';">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    Cerrar Sesión
+                </button>
+            </div>
+        </header>
+
+        <!-- User Info Card -->
+        <div id="userInfoCard" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+                <div>
+                    <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;">Nombre de la Cuenta</div>
+                    <div id="infoDocente" style="font-size: 17px; font-weight: 700; color: var(--text-primary);">-</div>
+                    <div id="infoDocumento" style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;">-</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;">Tipo</div>
+                    <div id="infoTipo" style="font-size: 14.5px; font-weight: 600; color: var(--text-primary);">-</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;">Escuela / Área</div>
+                    <div id="infoEscuela" style="font-size: 14.5px; font-weight: 600; color: var(--text-primary);">-</div>
+                    <div id="infoArea" style="font-size: 12.5px; color: var(--text-muted); margin-top: 3px;">-</div>
+                </div>
+                <div>
+                    <div style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;">Grupo de Investigación</div>
+                    <div id="infoGrupo" style="font-size: 14.5px; font-weight: 600; color: var(--text-primary); padding-right: 20px;">-</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Time Window Filter -->
+        <div id="globalTimeWindowContainer" style="display:none; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; padding:12px 18px; background:var(--panel-bg); border:1px solid var(--panel-border); border-radius:14px;">
+            <div>
+                <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.2px;">Período de Análisis</span>
+                <span style="font-size:12px; color:var(--text-secondary); margin-left:8px;">Afecta resultados en resumen y gráficas</span>
+            </div>
+            <div id="globalWindowBtns" style="display:flex; gap:5px; flex-wrap:wrap; align-items:center;">
+                <button type="button" class="mov-preset-btn" data-window="7d">7D</button>
+                <button type="button" class="mov-preset-btn" data-window="1m">1M</button>
+                <button type="button" class="mov-preset-btn" data-window="3m">3M</button>
+                <button type="button" class="mov-preset-btn" data-window="6m">6M</button>
+                <button type="button" class="mov-preset-btn" data-window="ytd">1A</button>
+                <button type="button" class="mov-preset-btn active" data-window="all">Todo</button>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <section class="summary-cards">
+            <!-- Card 1: Saldo Disponible -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-titles">
+                        <h3 id="dateLabel">SALDO DISPONIBLE</h3>
+                        <div class="amount" id="balanceActual">$0</div>
+                    </div>
+                    <div class="card-icon" style="background-color: #d1fae5; color: #059669;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="2" y1="10" x2="22" y2="10"></line>
+                        </svg>
+                    </div>
+                </div>
+                <!-- Botón de egreso: visible solo cuando el usuario tiene cuenta propia -->
+                <div id="saldoActions" style="display:none; margin-top:16px; padding-top:16px;
+                    border-top: 1px solid var(--panel-border);">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button class="btn-primary btn-action-card" id="btnSaldoIngreso" title="Añadir fondos directamente al saldo actual"
+                            style="display: none; background: #059669; border-color: #059669; color: white;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <line x1="12" y1="5" x2="12" y2="19" />
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                            </svg>
+                            Registrar Ingreso
+                        </button>
+                        <button class="btn-danger-outline btn-action-card" id="btnSaldoEgreso" title="Registrar o solicitar un egreso de fondos">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <line x1="5" y1="12" x2="19" y2="12" />
+                                <polyline points="12 5 19 12 12 19" />
+                            </svg>
+                            Registrar Egreso
+                        </button>
+                        <button class="btn-transfer btn-action-card" id="btnSaldoTransferencia" title="Transferir fondos a otra cuenta investigativa">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <polyline points="17 1 21 5 17 9"></polyline>
+                                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                                <polyline points="7 23 3 19 7 15"></polyline>
+                                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+                            </svg>
+                            Realizar Transferencia
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Card 2: Ingresos Totales -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-titles">
+                        <h3 id="ingresosTitle">INGRESOS TOTALES</h3>
+                        <div class="amount" id="totalIngresos">$0</div>
+                    </div>
+                    <div class="card-icon" style="background-color: #e0e7ff; color: #4338ca;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-breakdown" id="ingresosBreakdown">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+
+            <!-- Card 3: Salidas Totales -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-titles">
+                        <h3 id="egresosTitle">SALIDAS TOTALES</h3>
+                        <div class="amount" id="totalEgresos">$0</div>
+                    </div>
+                    <div class="card-icon" style="background-color: #fee2e2; color: #dc2626;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                            <polyline points="17 18 23 18 23 12"></polyline>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-breakdown" id="egresosBreakdown">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </section>
+        <!-- Evolution Chart -->
+        <section id="evolutionChartSection" style="display: none; margin-top: 0; margin-bottom: 28px;">
+            <div class="card chart-card" style="border-radius: 16px; overflow: hidden;">
+                <!-- Header + ventana de tiempo -->
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                    <div>
+                        <h3 style="font-size: 11px; letter-spacing: 1.4px; margin:0;">Evoluci&#243;n Cronol&#243;gica</h3>
+                        <p class="chart-subtitle" style="margin-top:5px; margin-bottom:0;">Saldo neto acumulado &nbsp;(Ingresos &minus; Egresos)</p>
+                    </div>
+                </div>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="evolucionSaldoChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section id="chartsSection" style="display: none;">
+            <!-- Las dos tortas en grid -->
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:24px;">
+                <div class="card chart-card">
+                    <h3>Distribución de Ingresos</h3>
+                    <p class="chart-subtitle" id="distIngSubtitle">Por categoría · acumulado</p>
+                    <div class="chart-container">
+                        <canvas id="ingresosChart"></canvas>
+                    </div>
+                </div>
+                <div class="card chart-card">
+                    <h3>Distribución de Egresos</h3>
+                    <p class="chart-subtitle" id="distEgrSubtitle">Por categoría · acumulado</p>
+                    <div class="chart-container">
+                        <canvas id="egresosChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Accounts List -->
+        <section class="accounts-section">
+            <!-- Toolbar: Búsqueda + Filtro por tipo -->
+            <div class="table-toolbar" id="tableToolbar">
+                <div class="search-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Buscar por nombre o correo..." autocomplete="off">
+                </div>
+                <div class="filter-group">
+                    <select id="filterTipo" class="filter-select">
+                        <option value="">Todos los tipos</option>
+                    </select>
+                    <span id="rowCount" class="row-count">0 registros</span>
+                </div>
+            </div>
+
+            <!-- Table Header sortable -->
+            <div class="table-header" id="tableHeader">
+                <div class="th-sortable" data-col="nombre_cuenta">
+                    Nombre de la Cuenta <span class="sort-icon">⇅</span>
+                </div>
+                <div class="th-sortable" data-col="ingresos" style="text-align: right;">
+                    Ingresos <span class="sort-icon">⇅</span>
+                </div>
+                <div class="th-sortable" data-col="egresos" style="text-align: right;">
+                    Egresos <span class="sort-icon">⇅</span>
+                </div>
+                <div class="th-sortable" data-col="saldo" style="text-align: right;">
+                    Saldo Actual <span class="sort-icon">⇅</span>
+                </div>
+            </div>
+            <div class="accounts-list" id="accountsList">
+                <!-- Data populated by app.js -->
+            </div>
+        </section>
+
+        <!-- ========== SECCION MOVIMIENTOS ========== -->
+        <section id="sectionMovimientos" style="display:none; animation: fadeIn 0.4s ease-out;">
+            <div class="card" style="padding:0; overflow:hidden;">
+
+                <!-- TOOLBAR ROW 1: Título + Búsqueda + Tipo -->
+                <div class="table-toolbar" style="flex-wrap:wrap; gap:12px; padding-bottom:12px;">
+                    <div>
+                        <h3 style="font-size:16px; font-weight:700; color:var(--text-primary); margin:0;">Historial de Movimientos</h3>
+                        <p style="font-size:12.5px; color:var(--text-muted); margin-top:3px;">Transacciones de tu cuenta</p>
+                    </div>
+                    <div class="filter-group" style="flex-wrap:wrap; gap:10px; margin-left:auto;">
+                        <div class="search-box" style="max-width:240px; min-width:160px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            <input type="text" id="movSearchInput" placeholder="Buscar categoría..." autocomplete="off">
+                        </div>
+                        <select id="filterMovTipo" class="filter-select">
+                            <option value="">Todos los tipos</option>
+                            <option value="ingreso">Ingresos</option>
+                            <option value="egreso">Egresos</option>
+                        </select>
+                        <span id="movCount" class="row-count">0 registros</span>
+                    </div>
+                </div>
+
+                <!-- TOOLBAR ROW 2: Filtros de fecha -->
+                <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 18px 14px; border-bottom:1px solid var(--panel-border); background:#fafbfd;">
+                    <!-- Botones rápidos -->
+                    <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-right:4px;">Período:</span>
+                    <div style="display:flex; flex-wrap:wrap; gap:6px;" id="movDatePresets">
+                        <button type="button" class="mov-preset-btn active" data-preset="all">Todo</button>
+                        <button type="button" class="mov-preset-btn" data-preset="today">Hoy</button>
+                        <button type="button" class="mov-preset-btn" data-preset="week">Última semana</button>
+                        <button type="button" class="mov-preset-btn" data-preset="fortnight">Última quincena</button>
+                        <button type="button" class="mov-preset-btn" data-preset="month">Último mes</button>
+                        <button type="button" class="mov-preset-btn" data-preset="quarter">Último trimestre</button>
+                        <button type="button" class="mov-preset-btn" data-preset="year">Este año</button>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-left:auto; flex-wrap:wrap;">
+                        <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Rango:</span>
+                        <input type="date" id="movFechaDesde" class="filter-select" style="padding:7px 10px; font-size:13px;" title="Desde">
+                        <span style="color:var(--text-muted); font-size:13px;">→</span>
+                        <input type="date" id="movFechaHasta" class="filter-select" style="padding:7px 10px; font-size:13px;" title="Hasta">
+                        <button type="button" id="movClearFechas" style="padding:7px 12px; font-size:12px; background:var(--accent-light); color:var(--accent-color); border:1px solid rgba(26,58,143,0.2); border-radius:8px; cursor:pointer; font-weight:600; display:none;">✕ Limpiar</button>
+                    </div>
+                </div>
+
+                <!-- TABLE -->
+                <div style="overflow-x:auto; max-height:calc(100vh - 320px); overflow-y:auto;">
+                    <table class="movimientos-table" style="min-width:700px;">
+                        <thead>
+                            <tr>
+                                <th class="mov-th-sort" data-col="fecha" style="cursor:pointer; user-select:none; white-space:nowrap;">
+                                    Fecha <span class="mov-sort-icon" data-col="fecha">↕</span>
+                                </th>
+                                <th>Tipo</th>
+                                <th class="mov-th-sort" data-col="categoria" style="cursor:pointer; user-select:none;">
+                                    Categoría <span class="mov-sort-icon" data-col="categoria">↕</span>
+                                </th>
+                                <th class="mov-th-sort" data-col="monto" style="cursor:pointer; user-select:none; text-align:right;">
+                                    Monto <span class="mov-sort-icon" data-col="monto">↕</span>
+                                </th>
+                                <th style="text-align:center;">Estado / Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movTableBody">
+                            <tr><td colspan="5" style="text-align:center;padding:48px;color:var(--text-muted);">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="movEmpty" style="display:none; padding:56px; text-align:center; color:var(--text-muted);">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.3; display:block; margin:0 auto 14px;">
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+                        <line x1="2" y1="10" x2="22" y2="10"></line>
+                    </svg>
+                    <div style="font-size:15px;font-weight:700;color:var(--text-primary);">Sin movimientos</div>
+                    <div style="font-size:13px;margin-top:5px;">No hay transacciones que coincidan con los filtros seleccionados.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECCION INFORME DE DEPENDENCIAS ========== -->
+        <section id="sectionInforme" style="display:none; animation: fadeIn 0.4s ease-out;">
+            <div class="card" style="padding: 28px 32px; margin-bottom: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                    <div>
+                        <h3 style="font-size:18px; font-weight:700; color:var(--text-primary); margin:0;">Informe de Dependencias</h3>
+                        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Resumen financiero por jerarquía y relación de dependencia</p>
+                    </div>
+                    <button onclick="renderInformeTable()" class="btn-primary" title="Generar la última versión del informe" style="font-size:13px; padding:10px 18px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="23 4 23 10 17 10"/>
+                            <polyline points="1 20 1 14 7 14"/>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                        </svg>
+                        Actualizar
+                    </button>
+                </div>
+                <div id="informeContent">
+                    <div style="text-align:center; padding:40px; color:var(--text-muted);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:.4; display:block; margin:0 auto 12px;">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <div style="font-size:14px;">Haz clic en Actualizar para generar el informe</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECCION APROBACIONES ========= -->
+        <section id="sectionAprobaciones" style="display:none; animation: fadeIn 0.4s ease-out;">
+            <div class="card" style="padding: 28px 32px; margin-bottom: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap: wrap; gap: 16px;">
+                    <div>
+                        <h3 style="font-size:18px; font-weight:700; color:var(--text-primary); margin:0;">Gestión de Egresos</h3>
+                        <p style="font-size:13px; color:var(--text-muted); margin-top:4px;">Administración global del estado de todos los egresos registrados</p>
+                    </div>
+                    <div style="display:flex; gap: 8px; align-items: center;">
+                        <button onclick="exportarAprobExcel()" class="btn-primary" title="Descargar lista actual en formato Excel" style="background:#10b981; font-size:13px; padding:8px 14px;">
+                            Excel
+                        </button>
+                        <button onclick="loadAprobacionesSection()" class="btn-primary" title="Actualizar esta lista con los datos más recientes" style="font-size:13px; padding:8px 14px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <polyline points="1 20 1 14 7 14"/>
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                            </svg>
+                            Refrescar
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap: 12px; align-items: stretch; flex-wrap: wrap; background: rgba(59, 130, 246, 0.05); padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; border: 1px solid rgba(59, 130, 246, 0.1);">
+                    <input type="text" id="aprobSearchInput" class="form-control" placeholder="Buscar cuenta origen..." style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 13px; border: 1px solid var(--border-color); border-radius: 6px; outline: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onkeyup="renderAprobacionesTable()" title="Filtrar egresos por nombre de cuenta origen o categoría">
+                    
+                    <select id="filterAprobEstado" class="form-control" style="width: auto; padding: 8px 12px; font-size: 13px; font-weight: 500; border: 1px solid var(--border-color); border-radius: 6px; outline: none; box-shadow: 0 1px 2px rgba(0,0,0,0.05);" onchange="renderAprobacionesTable()">
+                        <option value="">Todos los Estados</option>
+                        <option value="solicitada">Solicitada</option>
+                        <option value="en estudio">En Estudio</option>
+                        <option value="aprobada">Aprobada</option>
+                        <option value="en ejecución">En Ejecución</option>
+                        <option value="terminada">Terminada</option>
+                        <option value="rechazada">Rechazada</option>
+                    </select>
+
+                    <div style="display:flex; align-items:center; background: #fff; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                        <span style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; padding: 0 12px; border-right: 1px solid var(--border-color); background: #f8fafc; display: flex; align-items: center; height: 100%;">Rango</span>
+                        <input type="date" id="aprobFechaDesde" class="form-control" style="width: auto; padding: 8px 10px; font-size: 13px; border: none; background: transparent; outline: none; border-right: 1px solid var(--border-color); border-radius: 0;" onchange="renderAprobacionesTable()" title="Desde">
+                        <input type="date" id="aprobFechaHasta" class="form-control" style="width: auto; padding: 8px 10px; font-size: 13px; border: none; background: transparent; outline: none; border-radius: 0;" onchange="renderAprobacionesTable()" title="Hasta">
+                    </div>
+                </div>
+                
+                <div style="overflow-x:auto;">
+                    <table class="movimientos-table" style="min-width:700px;">
+                        <thead>
+                            <tr>
+                                <th>Cuenta Origen</th>
+                                <th>Categoría</th>
+                                <th>Monto</th>
+                                <th class="sortable sort-desc" data-col="fecha" onclick="sortAprob('fecha')">Fecha Generación</th>
+                                <th style="text-align:center;" class="sortable" data-col="estado" onclick="sortAprob('estado')">Acciones (Estado)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="aprobacionesTableBody">
+                            <tr><td colspan="5" style="text-align:center;padding:48px;color:var(--text-muted);">Cargando egresos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="aprobacionesEmpty" style="display:none; padding:56px; text-align:center; color:var(--text-muted);">
+                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="opacity:.3; display:block; margin:0 auto 14px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <div style="font-size:15px;font-weight:700;color:var(--text-primary);">Sin egresos registrados</div>
+                    <div style="font-size:13px;margin-top:5px;">Todo está al día.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== SECCION AYUDA (MANUAL DE USO) ========== -->
+        <section id="sectionAyuda" style="display:none; animation: fadeIn 0.4s ease-out;">
+            <div class="card" style="padding: 32px; margin-bottom: 24px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid var(--panel-border);">
+                    <div>
+                        <h3 style="font-size:20px; font-weight:700; color:var(--text-primary); margin:0; display:flex; align-items:center; gap:8px;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-color)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            Manual de Uso y Ayuda EAFIT es CTeI
+                        </h3>
+                        <p style="font-size:13px; color:var(--text-muted); margin-top:6px;">Guía rápida de funcionalidades básicas y avanzadas del Panel de Control Financiero.</p>
+                    </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+                    <!-- Columna Funcionarios Generales -->
+                    <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0;">
+                        <h4 style="color:#1e293b; font-size:15px; margin-top:0; margin-bottom:16px; border-left:3px solid #3b82f6; padding-left:10px;">Para Docentes / Investigadores</h4>
+                        
+                        <div style="margin-bottom:16px;">
+                            <strong style="color:#334155; font-size:13px; display:block; margin-bottom:4px;">1. Resumen y Saldos</strong>
+                            <p style="color:#64748b; font-size:12.5px; margin:0; line-height:1.4;">Consulta de inmediato los ingresos totales, el presupuesto consumido (egresos) y tu saldo restante en tiempo real. Utiliza los botones superiores de "Período" para acotar gráficos por fechas.</p>
+                        </div>
+                        
+                        <div style="margin-bottom:16px;">
+                            <strong style="color:#334155; font-size:13px; display:block; margin-bottom:4px;">2. Registro de Egresos</strong>
+                            <p style="color:#64748b; font-size:12.5px; margin:0; line-height:1.4;">Solo debes ingresar el Monto, Fecha, Categoría y una Justificación. Esto enviará la solicitud y aparecerá en el flujo como "Solicitada". El administrador definirá si pasa o no.</p>
+                        </div>
+                        
+                        <div style="margin-bottom:16px;">
+                            <strong style="color:#334155; font-size:13px; display:block; margin-bottom:4px;">3. Trazabilidad y Descarga (Movimientos)</strong>
+                            <p style="color:#64748b; font-size:12.5px; margin:0; line-height:1.4;">En la pestaña <em>Movimientos</em>, haz clic en <strong>Ver Historial</strong> bajo cada egreso para mirar las notas (justificación) y horas de cada etapa desde que se solicitó. Tienes el botón <strong>Descargar PDF</strong> para generar e imprimir recibos instantáneos de constancia, incluso si te rechazaron el trámite.</p>
+                        </div>
+                    </div>
+
+                    <!-- Columna Administrador -->
+                    <div style="background:#f0fdfa; padding:20px; border-radius:12px; border:1px solid #ccfbf1;">
+                        <h4 style="color:#0f766e; font-size:15px; margin-top:0; margin-bottom:16px; border-left:3px solid #14b8a6; padding-left:10px;">Para Perfil Administrador (Root)</h4>
+                        
+                        <div style="margin-bottom:16px;">
+                            <strong style="color:#115e59; font-size:13px; display:block; margin-bottom:4px;">1. Gestión Global de Egresos</strong>
+                            <p style="color:#0f766e; font-size:12.5px; margin:0; line-height:1.4;">Tendrás una visión y control absoluto de todas las facultades e investigadores. Podrás hacer clic en los trámites y aprobarlos, rechazarlos o ir moviéndolos de estado logístico ("En ejecución", "Terminada"). Usa el filtro por Estados para organizar una vista rápida.</p>
+                        </div>
+                        
+                        <div style="margin-bottom:16px;">
+                            <strong style="color:#115e59; font-size:13px; display:block; margin-bottom:4px;">2. Administrar y Editar Cuentas</strong>
+                            <p style="color:#0f766e; font-size:12.5px; margin:0; line-height:1.4;">Podrás crear o editar el perfil de nuevos usuarios definiendo su Escuela, Tipo de Grupo de Investigación y su Correo asigando (@eafit.edu.co), centralizando toda la jerarquía en "Editar Cuenta".</p>
+                        </div>
+
+                        <div style="margin-bottom:16px;">
+                            <strong style="color:#115e59; font-size:13px; display:block; margin-bottom:4px;">3. Reportes Analíticos Consolidados</strong>
+                            <p style="color:#0f766e; font-size:12.5px; margin:0; line-height:1.4;">Usa la pantalla de <strong>Informe de Dependencias</strong> para exportar balances estructurales masivos. Recuerda que solo el usuario <em>root</em> puede presionar el botón "Respaldar DB" ubicado en el menú inferior izquierdo de Configuración.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ========== MODAL GESTIONAR CUENTAS ========== -->
+    <div class="modal-overlay" id="modalEditarCuenta">
+        <div class="modal modal-split-ingreso" style="max-width:1000px; width: 90%;">
+            <button class="modal-close-x" id="closeEditarCuenta" title="Cerrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="modal-type-header" style="background:var(--accent-color); color:white;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                    <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                </svg>
+                GESTIONAR CUENTAS
+            </div>
+            
+            <div class="form-group" style="margin-top:20px;">
+                <label for="editSelectCuenta">Cuenta a Editar</label>
+                <select id="editSelectCuenta" class="form-control">
+                    <option value="new">-- NUEVA CUENTA --</option>
+                </select>
+            </div>
+            <div class="form-group" id="editEmailGroup" style="display:none;">
+                <label for="editEmail">Correo (@eafit.edu.co)</label>
+                <input type="email" id="editEmail" class="form-control" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label for="editNombre">Nombre de la Cuenta</label>
+                <input type="text" id="editNombre" class="form-control" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label for="editDocumento">Documento</label>
+                <input type="text" id="editDocumento" class="form-control" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <label for="editTipo">Tipo</label>
+                <input type="text" list="listTipo" id="editTipo" class="form-control" autocomplete="off" placeholder="Escribe o selecciona..." />
+                <datalist id="listTipo"></datalist>
+            </div>
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="editEscuela">Escuela</label>
+                    <input type="text" list="listEscuela" id="editEscuela" class="form-control" autocomplete="off" placeholder="Escribe o selecciona..." />
+                    <datalist id="listEscuela"></datalist>
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="editArea">Área</label>
+                    <input type="text" list="listArea" id="editArea" class="form-control" autocomplete="off" placeholder="Escribe o selecciona..." />
+                    <datalist id="listArea"></datalist>
+                </div>
+                <div class="form-group" style="flex: 1; min-width: 200px;">
+                    <label for="editGrupo">Grupo de Investigación</label>
+                    <input type="text" list="listGrupo" id="editGrupo" class="form-control" autocomplete="off" placeholder="Escribe o selecciona..." />
+                    <datalist id="listGrupo"></datalist>
+                </div>
+            </div>
+            
+            <div style="color:red; font-size:13px; margin-bottom:12px; display:none;" id="errorEditarCuenta"></div>
+
+            <div style="text-align: right; margin-top:24px;">
+                <button type="button" class="btn-cancel" id="btnCancelEditarCuenta">Cancelar</button>
+                <button type="button" class="btn-primary" id="btnGuardarCuenta" style="min-width: 120px;">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL EDITAR CATEGORIAS ========== -->
+    <div class="modal-overlay" id="modalEditCats">
+        <div class="modal modal-split-ingreso" style="max-width:1000px; width: 90%;">
+            <button class="modal-close-x" id="closeEditCats" title="Cerrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="modal-type-header" style="background:#4b5563; color:white;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:8px;">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                ADMINISTRAR CATEGORÍAS
+            </div>
+
+            <div style="margin-top:20px; font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Agrega nuevas categorías escribiendo y presionando Enter o la coma (,). Haz clic en la <strong>×</strong> para eliminar.</div>
+            
+            <div class="form-group">
+                <label>Categorías de Ingreso</label>
+                <div class="tags-container" id="containerIngresos" onclick="document.getElementById('inputIngresos').focus()">
+                    <div class="tags-list" id="listIngresos"></div>
+                    <input type="text" id="inputIngresos" class="tags-input" placeholder="Añadir..." autocomplete="off">
+                </div>
+            </div>
+            
+            <div class="form-group" style="margin-top:16px;">
+                <label>Categorías de Egreso</label>
+                <div class="tags-container" id="containerEgresos" onclick="document.getElementById('inputEgresos').focus()">
+                    <div class="tags-list" id="listEgresos"></div>
+                    <input type="text" id="inputEgresos" class="tags-input" placeholder="Añadir..." autocomplete="off">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top:16px;">
+                <label>Categorías de Transferencias</label>
+                <div class="tags-container" id="containerTransferencias" onclick="document.getElementById('inputTransferencias').focus()">
+                    <div class="tags-list" id="listTransferencias"></div>
+                    <input type="text" id="inputTransferencias" class="tags-input" placeholder="Añadir..." autocomplete="off">
+                </div>
+            </div>
+
+            <div style="color:red; font-size:13px; margin-bottom:12px; display:none;" id="errorEditCats"></div>
+            <div style="color:green; font-size:13px; margin-bottom:12px; display:none;" id="successEditCats"></div>
+
+            <div style="text-align: right; margin-top:24px;">
+                <button type="button" class="btn-cancel" id="btnCancelEditCats">Cancelar</button>
+                <button type="button" class="btn-primary" id="btnGuardarCats" style="min-width: 120px;">
+                    Guardar Categorías
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL INGRESO ========== -->
+    <div class="modal-overlay" id="modalIngreso">
+        <div class="modal modal-split-ingreso">
+            <button class="modal-close-x" id="closeIngreso" title="Cerrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="modal-type-header ingreso-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="10" width="18" height="10" rx="2" />
+                    <line x1="12" y1="2" x2="12" y2="6" />
+                    <polyline points="8 6 12 2 16 6" />
+                </svg>
+                NUEVO TRASLADO DE FONDOS
+            </div>
+            <input type="hidden" id="ingresoAccountId">
+
+            <div class="form-group" id="cuentaDestinoIngresoWrapper" style="display:none;">
+                <label for="cuentaDestinoIngresoSearch">Buscar Cuenta Destino</label>
+                <input type="text" id="cuentaDestinoIngresoSearch" class="form-control" placeholder="Escriba para filtrar cuentas..." autocomplete="off" style="margin-bottom:8px;">
+                <select id="cuentaDestinoIngreso" class="form-control" size="4" style="height:auto;">
+                    <option value="">— Seleccione una cuenta —</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="ingresoCategory">Categoría de Ingreso</label>
+                <select id="ingresoCategory" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label for="ingresoAmount">Monto a Transferir</label>
+                <div class="amount-input-wrap">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="ingresoAmount" class="form-control amount-input-field" step="1" min="0"
+                        placeholder="0" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="ingresoFecha">Fecha del Registro</label>
+                <input type="datetime-local" id="ingresoFecha" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="ingresoReferencia">Referencia</label>
+                <input type="text" id="ingresoReferencia" class="form-control" placeholder="Ej. Asignación 2026">
+            </div>
+
+            <div id="ingresoMsg" class="modal-msg" style="display:none;"></div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelIngreso">Cancelar</button>
+                <button class="btn-modal-ingreso" id="saveIngreso">
+                    Ejecutar Traslado
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL EGRESO ========== -->
+    <div class="modal-overlay" id="modalEgreso">
+        <div class="modal modal-split-egreso">
+            <button class="modal-close-x" id="closeEgreso" title="Cerrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="modal-type-header egreso-header" id="dynamicEgresoHeader">
+                <svg id="dynamicEgresoIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="12" x2="12" y1="18" y2="12" />
+                    <polyline points="9 15 12 18 15 15" />
+                </svg>
+                <span id="dynamicEgresoTitle">REGISTRO DE GASTOS / EJECUCIÓN</span>
+            </div>
+            <input type="hidden" id="egresoAccountId">
+
+            <div class="form-group">
+                <label for="egresoCategory">Tipo de Operación</label>
+                <select id="egresoCategory" class="form-control"></select>
+            </div>
+
+            <!-- Campo de Cuenta Destino: visible solo para transferencias -->
+            <div class="form-group" id="cuentaDestinoWrapper" style="display:none;">
+                <label for="cuentaDestinoSearch">Buscar Cuenta Destino</label>
+                <input type="text" id="cuentaDestinoSearch" class="form-control" placeholder="Escriba para filtrar cuentas..." autocomplete="off" style="margin-bottom:8px;">
+                <select id="cuentaDestino" class="form-control" size="5" style="height:auto;">
+                    <option value="">— Seleccione una cuenta —</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="egresoAmount" id="egresoAmountLabel">Monto</label>
+                <div class="amount-input-wrap">
+                    <span class="currency-symbol">$</span>
+                    <input type="number" id="egresoAmount" class="form-control amount-input-field" step="1" min="0"
+                        placeholder="0" autocomplete="off">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="egresoFecha">Fecha del Registro</label>
+                <input type="datetime-local" id="egresoFecha" class="form-control">
+            </div>
+            <div class="form-group" id="egresoJustificacionWrapper">
+                <label for="egresoJustificacion">Justificación / Referencia</label>
+                <input type="text" id="egresoJustificacion" class="form-control" placeholder="Ej. Compra servidores">
+            </div>
+
+            <div id="egresoMsg" class="modal-msg" style="display:none;"></div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelEgreso">Cancelar</button>
+                <button class="btn-modal-egreso" id="saveEgreso">
+                    <span id="saveEgresoLabel">Registrar Gasto</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2.5">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL MOVIMIENTOS ========== -->
+    <div class="modal-overlay" id="modalMovimientos">
+        <div class="modal modal-movimientos">
+            <button class="modal-close-x" id="closeMovimientos" title="Cerrar">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+            <div class="modal-type-header movimientos-header">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                MOVIMIENTOS DE LA CUENTA
+            </div>
+            
+            <div class="modal-body-scrollable">
+                <table class="movimientos-table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Categoría</th>
+                            <th class="text-right">Monto</th>
+                            <th class="text-center">Estado / Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movimientosTableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+                <div id="movimientosEmpty" class="empty-state" style="display: none;">
+                    No hay movimientos registrados para esta cuenta.
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" id="cancelMovimientos">Cerrar Tabla</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/animations/scale.css" />
+    <style>
+        .tippy-box[data-theme~='banco'] {
+            background-color: #0d1b3e; /* var(--sidebar-bg) */
+            color: #ffffff;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(13,27,62,0.3);
+            padding: 4px;
+            letter-spacing: 0.2px;
+        }
+        .tippy-box[data-theme~='banco'][data-placement^='top'] > .tippy-arrow::before { border-top-color: #0d1b3e; }
+        .tippy-box[data-theme~='banco'][data-placement^='bottom'] > .tippy-arrow::before { border-bottom-color: #0d1b3e; }
+        .tippy-box[data-theme~='banco'][data-placement^='left'] > .tippy-arrow::before { border-left-color: #0d1b3e; }
+        .tippy-box[data-theme~='banco'][data-placement^='right'] > .tippy-arrow::before { border-right-color: #0d1b3e; }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const convertTitle = (el) => {
+                const titleVal = el.getAttribute('title');
+                if (titleVal && titleVal.trim() !== '') {
+                    el.setAttribute('data-tippy-content', titleVal);
+                    el.removeAttribute('title');
+                }
+            };
+            document.querySelectorAll('[title]').forEach(convertTitle);
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(m => {
+                    m.addedNodes.forEach(node => {
+                        if (node.nodeType === 1) {
+                            if (node.hasAttribute('title')) convertTitle(node);
+                            node.querySelectorAll('[title]').forEach(convertTitle);
+                        }
+                    });
+                });
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            if (window.tippy) {
+                tippy.delegate('body', {
+                    target: '[data-tippy-content]',
+                    animation: 'scale',
+                    theme: 'banco',
+                    delay: [50, 0],
+                    maxWidth: 300,
+                    arrow: true,
+                    offset: [0, 8]
+                });
+            }
+        });
+    </script>
+    <script src="/js/app.js"></script>
+    <style>
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            border: 1px solid var(--border-color, #e2e8f0);
+            border-radius: 8px;
+            background: #fff;
+            min-height: 48px;
+            cursor: text;
+        }
+        .tags-container:focus-within {
+            border-color: var(--accent-color, #3b82f6);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .tag-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        /* Ingresos: Verde */
+        .chip-ingresos {
+            background: rgba(16, 185, 129, 0.1);
+            color: #059669;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .chip-ingresos:hover {
+            background: rgba(16, 185, 129, 0.15);
+        }
+        .chip-ingresos .tag-remove:hover {
+            background: rgba(16, 185, 129, 0.2);
+            color: #047857;
+        }
+
+        /* Egresos: Rojo */
+        .chip-egresos {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .chip-egresos:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+        .chip-egresos .tag-remove:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #b91c1c;
+        }
+
+        /* Transferencias: Morado */
+        .chip-transferencias {
+            background: rgba(139, 92, 246, 0.1);
+            color: #7c3aed;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        .chip-transferencias:hover {
+            background: rgba(139, 92, 246, 0.15);
+        }
+        .chip-transferencias .tag-remove:hover {
+            background: rgba(139, 92, 246, 0.2);
+            color: #6d28d9;
+        }
+        .tag-remove {
+            margin-left: 6px;
+            cursor: pointer;
+            margin-right: -4px;
+            padding: 2px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .tags-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 120px;
+            font-size: 13.5px;
+            padding: 4px;
+            background: transparent;
+            color: var(--text-primary);
+        }
+    </style>
+</body>
+
+</html>

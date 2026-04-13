@@ -1,0 +1,28 @@
+{
+  "ingresos": [
+    "Transferencia Fondo CTeI",
+    "Reconocimiento",
+    "propiedad intelectual",
+    "Incentivos",
+    "Convenios",
+    "Otro"
+  ],
+  "egresos": [
+    "Personal",
+    "Insumo o Materiales",
+    "Infraestructura o Equipos",
+    "Eventos académicos",
+    "Servicios",
+    "Transferencia a la Comunidad Académica",
+    "Otros"
+  ],
+  "transferencias": [
+    "Transferencia Fondo CTeI",
+    "Reconocimiento",
+    "ABC",
+    "propiedad intelectual",
+    "Incentivos",
+    "Convenios",
+    "Otro"
+  ]
+}

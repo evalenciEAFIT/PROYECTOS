@@ -1,0 +1,70 @@
+{
+  "columns": [
+    "DOCUMENTO",
+    "NOMBRES Y APELLIDOS",
+    "EMAIL",
+    "\u00c1REA",
+    "ESCUELA",
+    "GRUPO DE INVESTIGACI\u00d3N AL QUE PERTENECE",
+    "GRUPO DE INVESTIGACI\u00d3N 2",
+    "GRUPO DE INVESTIGACI\u00d3N 3",
+    "C\u00d3DIGO DEL GRUPO3"
+  ],
+  "first_rows": [
+    {
+      "DOCUMENTO": 98628042.0,
+      "NOMBRES Y APELLIDOS": "ADOLFO ESLAVA GOMEZ",
+      "EMAIL": "aeslava@eafit.edu.co",
+      "\u00c1REA": "\u00c1REA DE POL\u00cdTICA Y DESARROLLO",
+      "ESCUELA": "ESCUELA DE FINANZAS, ECONOM\u00cdA Y GOBIERNO",
+      "GRUPO DE INVESTIGACI\u00d3N AL QUE PERTENECE": "Pol\u00edticas y Desarrollo",
+      "GRUPO DE INVESTIGACI\u00d3N 2": NaN,
+      "GRUPO DE INVESTIGACI\u00d3N 3": NaN,
+      "C\u00d3DIGO DEL GRUPO3": NaN
+    },
+    {
+      "DOCUMENTO": 32208960.0,
+      "NOMBRES Y APELLIDOS": "ADRIANA ARISTIZ\u00c1BAL CASTRILL\u00d3N",
+      "EMAIL": "aaristizac@eafit.edu.co",
+      "\u00c1REA": "\u00c1REA SISTEMAS NATURALES Y SOSTENIBILIDAD",
+      "ESCUELA": "ESCUELA DE CIENCIAS APLICADAS E INGENIER\u00cdA",
+      "GRUPO DE INVESTIGACI\u00d3N AL QUE PERTENECE": "Grupo de Investigaci\u00f3n en Bioingenier\u00eda (GIB EAFIT)",
+      "GRUPO DE INVESTIGACI\u00d3N 2": "Ingenier\u00eda para la Sostenibilidad, Energ\u00eda y Cambio Clim\u00e1tico (ISEC\u00b2)",
+      "GRUPO DE INVESTIGACI\u00d3N 3": NaN,
+      "C\u00d3DIGO DEL GRUPO3": NaN
+    },
+    {
+      "DOCUMENTO": 65780210.0,
+      "NOMBRES Y APELLIDOS": "ADRIANA MARCELA RAMIREZ BARACALDO",
+      "EMAIL": "aramir96@eafit.edu.co",
+      "\u00c1REA": "\u00c1REA DE POL\u00cdTICA Y DESARROLLO",
+      "ESCUELA": "ESCUELA DE FINANZAS, ECONOM\u00cdA Y GOBIERNO",
+      "GRUPO DE INVESTIGACI\u00d3N AL QUE PERTENECE": "Pol\u00edticas y Desarrollo",
+      "GRUPO DE INVESTIGACI\u00d3N 2": NaN,
+      "GRUPO DE INVESTIGACI\u00d3N 3": NaN,
+      "C\u00d3DIGO DEL GRUPO3": NaN
+    },
+    {
+      "DOCUMENTO": 43795154.0,
+      "NOMBRES Y APELLIDOS": "ALBA PATRICIA CARDONA ZULUAGA",
+      "EMAIL": "azuluaga@eafit.edu.co",
+      "\u00c1REA": "\u00c1REA DE LENGUAJE",
+      "ESCUELA": "ESCUELA DE ARTES Y HUMANIDADES",
+      "GRUPO DE INVESTIGACI\u00d3N AL QUE PERTENECE": "Estudios en filosof\u00eda, hermen\u00e9utica y narrativas",
+      "GRUPO DE INVESTIGACI\u00d3N 2": NaN,
+      "GRUPO DE INVESTIGACI\u00d3N 3": NaN,
+      "C\u00d3DIGO DEL GRUPO3": NaN
+    },
+    {
+      "DOCUMENTO": 71726659.0,
+      "NOMBRES Y APELLIDOS": "ALBERTO MAURICIO ARIAS CORREA",
+      "EMAIL": "amariasc@eafit.edu.co",
+      "\u00c1REA": "\u00c1REA DISE\u00d1O DE PRODUCTO Y EXPERIENCIAS",
+      "ESCUELA": "ESCUELA DE CIENCIAS APLICADAS E INGENIER\u00cdA",
+      "GRUPO DE INVESTIGACI\u00d3N AL QUE PERTENECE": "No aplica",
+      "GRUPO DE INVESTIGACI\u00d3N 2": NaN,
+      "GRUPO DE INVESTIGACI\u00d3N 3": NaN,
+      "C\u00d3DIGO DEL GRUPO3": NaN
+    }
+  ]
+}
