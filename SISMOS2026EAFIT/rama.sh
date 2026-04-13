@@ -17,10 +17,12 @@ SOURCE_DIR="/home/edi/PROYECTOS/visor_cartografico_dev_2026"
 TARGET_DIR="/home/edi/PROYECTOS/PROYECTOS/SISMOS2026EAFIT"
 REPO_DIR="/home/edi/PROYECTOS/PROYECTOS"
 
-echo -e "${BLUE}▶ Iniciando actualización del Visor Cartográfico...${NC}"
+echo -e "${BLUE}▶ Preparando repositorio (trayendo cambios remotos)...${NC}"
+cd "$REPO_DIR" || exit
+git pull origin main --rebase 2>&1 | grep -v "Already up to date" || true
 
-# 1. Sincronizar archivos (excluyendo entornos virtuales y temporales)
-echo -e "${BLUE}▶ Sincronizando archivos con el repositorio...${NC}"
+# 1. Sincronizar SOLO CÓDIGO (sin datos geográficos ni temporales)
+echo -e "${BLUE}▶ Sincronizando código fuente con el repositorio...${NC}"
 rsync -av --delete \
     --exclude='venv/' \
     --exclude='__pycache__/' \
@@ -28,15 +30,11 @@ rsync -av --delete \
     --exclude='*.pyc' \
     --exclude='.pytest_cache' \
     --exclude='.env' \
+    --exclude='data/'          \
     "$SOURCE_DIR/" "$TARGET_DIR/"
 
 # 2. Operaciones de Git
-echo -e "${BLUE}▶ Preparando envío a GitHub (evalenciEAFIT/PROYECTOS)...${NC}"
-cd "$REPO_DIR" || exit
-
-# Actualizar para evitar conflictos
-git pull origin main --rebase
-
+echo -e "${BLUE}▶ Preparando commit...${NC}"
 git add .
 
 # Verificar si hay cambios antes de hacer commit
