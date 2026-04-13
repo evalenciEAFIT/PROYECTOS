@@ -30,7 +30,6 @@ rsync -av --delete \
     --exclude='*.pyc' \
     --exclude='.pytest_cache' \
     --exclude='.env' \
-    --exclude='data/'          \
     "$SOURCE_DIR/" "$TARGET_DIR/"
 
 # 2. Operaciones de Git — SOLO carpeta SISMOS2026EAFIT (no tocar otros proyectos del repo)

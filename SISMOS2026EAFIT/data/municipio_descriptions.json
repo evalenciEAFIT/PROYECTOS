@@ -1,0 +1,22 @@
+{
+    "default": {
+        "economica": {
+            "description": "Las curvas de excedencia representan el periodo de retorno de las afectaciones económicas, humanas y estructurales en el lugar de análisis. Es decir, las curvas de excedencia indican con qué frecuencia se espera que ocurran diferentes niveles de afectaciones. Las figuras presentan los valores medios.",
+            "methodology": "Evaluación probabilística del riesgo sísmico basada en eventos",
+            "source": "Evaluación del riesgo sísmico de Antioquia, 2025",
+            "last_update": "2025"
+        },
+        "civil": {
+            "description": "Costo de reparación de la edificación para todos los niveles de daño directo causados por los sismos (no incluyen consecuencias indirectas que pueden ocurrir después del sismo). Este costo considera que las estructuras deben repararse siguiendo lineamientos de sismo resistencia.",
+            "methodology": "Evaluación probabilística del riesgo sísmico basada en eventos",
+            "source": "Evaluación del riesgo sísmico de Antioquia, 2025",
+            "last_update": "2025"
+        },
+        "humana": {
+            "description": "Afectaciones en la población generadas por los daños de la edificación, asumiendo un evento nocturno (totalidad de la población dentro de las edificaciones). Las afectaciones incluyen fallecidos (totalidad de ocupantes que pierden la vida), heridos (personas con heridas de gravedad que requieren de atención urgente) y desplazados (número de ocupantes en edificaciones que no son habitables temporal o permanentemente, correspondiente a edificaciones con daño severo o completo)",
+            "methodology": "Evaluación probabilística del riesgo sísmico basada en eventos",
+            "source": "Evaluación del riesgo sísmico de Antioquia, 2025",
+            "last_update": "2025"
+        }
+    }
+}
