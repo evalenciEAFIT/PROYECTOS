@@ -1,0 +1,2 @@
+web: cd DASHBOARD && ./dashboard
+api: cd API && ./api

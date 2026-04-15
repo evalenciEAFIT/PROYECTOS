@@ -1,0 +1,460 @@
+:root {
+    /* Color Palette */
+    --primary: #2563eb;       /* Blue 600 */
+    --primary-hover: #1d4ed8; /* Blue 700 */
+    --secondary: #64748b;     /* Slate 500 */
+    --accent: #0284c7;        /* Sky 600 */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #0ea5e9;
+    
+    /* Backgrounds */
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-sidebar: #ffffff;
+    --bg-nav: #1e293b;
+    
+    /* Typography */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Effects */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    
+    /* Borders */
+    --border-color: #e2e8f0;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: var(--bg-main) !important;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+.h-custom {
+    height: calc(100vh - 64px);
+}
+
+/* Navbar Premium */
+.navbar {
+    height: 64px;
+    background: var(--bg-nav) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    padding: 0 1.5rem;
+}
+
+.navbar-brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    font-size: 1.25rem;
+}
+
+/* Sidebar & Cards */
+#sidebar {
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    background: var(--bg-card);
+    transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+}
+
+.accordion-item {
+    border: 1px solid var(--border-color);
+    margin-bottom: 0.75rem;
+    border-radius: var(--radius-md) !important;
+    overflow: hidden;
+}
+
+.accordion-button {
+    font-family: var(--font-heading);
+    font-weight: 500;
+    background-color: #ffffff !important;
+    color: #334155 !important;
+    padding: 1rem;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f1f5f9 !important;
+    box-shadow: none;
+}
+
+.accordion-button::after {
+    background-size: 1rem;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    padding: 0.625rem 1.25rem;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Map & Table Containers */
+#map-container, #table-container {
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+}
+
+#map {
+    z-index: 1;
+    height: 100%;
+}
+
+/* Modern Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Multi-select styling */
+select[multiple] {
+    padding: 0.5rem;
+}
+
+select[multiple] option {
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 2px;
+}
+
+/* Power BI Table Overhaul */
+.power-bi-table {
+    border: none;
+    font-size: 0.8125rem !important;
+}
+
+.power-bi-table thead th {
+    background-color: #f8fafc !important;
+    color: #475569;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    padding: 0.75rem 1rem !important;
+    border-bottom: 2px solid var(--border-color) !important;
+    position: sticky;
+    vertical-align: top !important;
+    top: 0;
+    z-index: 10;
+}
+
+.power-bi-table tbody td {
+    padding: 0.75rem 1rem !important;
+    color: #334155;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: top !important;
+    white-space: nowrap;
+}
+
+.power-bi-table tbody tr:hover {
+    background-color: #f1f5f9 !important;
+}
+
+.badge {
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+    border-radius: 2rem;
+}
+
+/* Restored and Modernized Power Query Table Styling */
+.pq-header-title {
+    font-weight: 600;
+    color: var(--secondary);
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.pq-type-icon {
+    color: var(--primary);
+    font-size: 0.7rem;
+    background: #e0e7ff;
+    padding: 0.15rem 0.35rem;
+    border-radius: var(--radius-sm);
+}
+
+.pq-stats {
+    font-size: 0.7rem;
+    color: #64748b;
+    line-height: 1.4;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.pq-stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.pq-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 6px;
+}
+
+.pq-valid { background-color: var(--success); }
+.pq-error { background-color: var(--danger); }
+.pq-empty { background-color: #cbd5e1; }
+
+.pq-bar-container {
+    height: 4px;
+    width: 100%;
+    background-color: #f1f5f9;
+    display: flex;
+    margin: 6px 0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.pq-bar-valid-fill { background-color: var(--success); height: 100%; }
+.pq-bar-error-fill { background-color: var(--danger); height: 100%; }
+.pq-bar-empty-fill { background-color: #cbd5e1; height: 100%; }
+
+.pq-dist-chart {
+    height: 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    margin-top: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pq-dist-bar {
+    background-color: var(--primary);
+    flex: 1;
+    min-width: 2px;
+    border-radius: 2px 2px 0 0;
+    opacity: 0.8;
+}
+
+.pq-dist-bar:hover {
+    opacity: 1;
+    background-color: var(--primary-hover);
+}
+
+.pq-distinct {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    margin-top: 4px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Ocultar iconos nativos de DataTables para usar los dropdowns estilo Power BI */
+.power-bi-table th.sorting::before,
+.power-bi-table th.sorting::after,
+.power-bi-table th.sorting_asc::before,
+.power-bi-table th.sorting_asc::after,
+.power-bi-table th.sorting_desc::before,
+.power-bi-table th.sorting_desc::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* Resizers */
+.resizer-h {
+    width: 10px;
+    cursor: col-resize;
+    background-color: #e2e8f0;
+    transition: background-color 0.2s;
+    margin: 0 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resizer-h .fas {
+    font-size: 10px;
+    color: #94a3b8 !important;
+    transition: color 0.2s;
+}
+
+.resizer-h:hover, .resizer-h.resizing {
+    background-color: var(--primary);
+    opacity: 0.8;
+}
+
+.resizer-h:hover .fas, .resizer-h.resizing .fas {
+    color: white !important;
+}
+
+.resizer-v {
+    height: 10px;
+    cursor: row-resize;
+    background-color: #e2e8f0;
+    transition: background-color 0.2s;
+    margin: 4px 0;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.resizer-v .fas {
+    font-size: 10px;
+    color: #94a3b8 !important;
+    transition: color 0.2s;
+}
+
+.resizer-v:hover, .resizer-v.resizing {
+    background-color: var(--primary);
+    opacity: 0.8;
+}
+
+.resizer-v:hover .fas, .resizer-v.resizing .fas {
+    color: white !important;
+}
+
+/* Leaflet Overrides */
+.leaflet-container {
+    background: #f1f5f9 !important;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+}
+
+.custom-div-icon {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.custom-div-icon:hover {
+    transform: scale(1.2);
+    z-index: 1000 !important;
+}
+
+/* Filtering Summary Box */
+#filterSummaryContainer {
+    border-left: 4px solid var(--primary) !important;
+    background-color: #eff6ff !important; /* Blue 50 */
+    border-radius: var(--radius-md);
+}
+
+/* Floating Accessibility */
+.accessibility-controls {
+    border: none !important;
+    background-color: var(--bg-nav) !important;
+    border-radius: var(--radius-xl) !important;
+}
+
+.accessibility-controls .btn {
+    transition: all 0.2s;
+}
+
+.accessibility-controls .btn:hover {
+    transform: scale(1.1);
+}
+
+/* Contrast Modes */
+body.high-contrast {
+    --bg-main: #000;
+    --bg-card: #111;
+    --border-color: #444;
+}
+
+body.high-contrast .text-primary, 
+body.high-contrast .text-dark,
+body.high-contrast .text-secondary {
+    color: #fff !important;
+}
+
+/* Responsive Table */
+.dataTables_wrapper {
+    padding: 0 !important;
+}
+
+.dataTables_info, .dataTables_paginate {
+    padding: 1rem !important;
+    font-size: 0.875rem;
+}
+
+/* Fix for DataTables 'Show Entries' select width and arrow overlap */
+div.dataTables_length select.form-select {
+    width: auto !important;
+    min-width: 4.5rem !important;
+    padding-right: 1.75rem !important;
+    background-position: right 0.5rem center !important;
+}

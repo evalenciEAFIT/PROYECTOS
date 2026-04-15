@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Awesome Markers -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/public/css/style.css?v=2">
+</head>
+
+<body class="bg-light">
+    <!-- Barra de Navegación -->
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span class="navbar-brand mb-0 h1 d-flex align-items-center">
+                SAMA Repositorio - Manual de Uso
+            </span>
+            <div>
+                <a href="/" class="btn btn-outline-light btn-sm me-2">
+                    <i class="fas fa-home me-1"></i> Volver al Dashboard
+                </a>
+                <img src="/public/img/logo.png" alt="Logo de DAGRAN - Gobernación de Antioquia"
+                    style="height: 40px; object-fit: contain;">
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido Principal -->
+    <div class="container my-5 pb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm border-0 rounded-3">
+                    <div class="card-header bg-white py-3 border-bottom-0" style="border-radius: 12px 12px 0 0;">
+                        <h2 class="h3 fw-bold text-dark mb-0"><i class="fas fa-book-reader text-primary me-2"></i>Guía
+                            Rápida del Dashboard</h2>
+                    </div>
+                    <div class="card-body px-4 py-4 px-md-5">
+                        <p class="lead text-muted mb-4">
+                            Bienvenido/a al Manual de Uso del Repositorio de Datos de SAMA (Sistema de Alerta Temprana
+                            de Antioquia). Este espacio ha sido diseñado para centralizar y facilitar el acceso al vasto
+                            flujo de información hidro-meteorológica y climática de nuestra región.
+                        </p>
+
+                        <!-- Imagen Principal -->
+                        <div class="text-center mb-5">
+                            <img src="/public/img/dashboard_main_1.png" alt="Vista General del Dashboard SAMA"
+                                class="img-fluid rounded shadow-lg border"
+                                style="max-height: 450px; width: 100%; object-fit: contain;">
+                            <p class="text-muted small mt-2">Figura 1: Vista general del visualizador cartográfico
+                                interactivo sin filtros aplicados.</p>
+                        </div>
+
+                        <!-- Panel de Filtros -->
+                        <div class="mb-5">
+                            <h4 class="fw-bold"><i class="fas fa-filter text-success me-2"></i>1. Panel Lateral de
+                                Filtros</h4>
+                            <p>En el costado izquierdo de la pantalla (que puedes ocultar o mostrar usando el botón
+                                superior de barras invertidas) encontrarás el <strong>Módulo de Filtro de
+                                    Búsqueda</strong> dividido en 3 secciones colapsables:</p>
+                            <ul>
+                                <li><strong>Rango y Frecuencia:</strong> Selecciona el rango de fechas en el que quieres
+                                    consultar datos, presiona cualquiera de los botones de atajo rápidos (1 semana, 1
+                                    mes, etc.) y no olvides elegir qué frecuencia temporal quieres visualizar (Medidas
+                                    por minutos, horas, etc.).</li>
+                                <li><strong>Filtro Espacial Avanzado:</strong> Reduce el listado de estaciones buscadas
+                                    seleccionando tu Municipio o Subregión específica desde las listas (¡puedes escoger
+                                    múltiples dejando presionado <code>Ctrl</code> en tu teclado!). También está
+                                    disponible un "Punto de Interés (Geo-Radio)" donde, con solo poner unas coordenadas
+                                    LAT/LNG y un Radio en Metros buscará datos únicamente para estaciones en ese
+                                    polígono redondo.</li>
+                                <li><strong>Variables y Criterios Opcionales:</strong> Filtra qué tipo de estaciones
+                                    ambientales quieres mostrar (Lluvia, Caudales, Meteo) o escoge unas variables
+                                    termodinámicas específicas.</li>
+                            </ul>
+                        </div>
+
+                        <!-- El Mapa -->
+                        <div class="mb-5">
+                            <h4 class="fw-bold"><i class="fas fa-map-marked-alt text-danger me-2"></i>2. Mapa y
+                                Selección Espacial</h4>
+                            <p>El núcleo visual del proyecto te muestra un mapa amigable con todos los nodos
+                                sensorizados de Antioquia:</p>
+                            <ul>
+                                <li>Los marcadores en el mapa varían en estilo para ayudarte a distinguir estaciones de
+                                    Nivel (ondas de agua), Precipitación (nubes con lluvia) o Meteorológicas (sol).</li>
+                                <li>Haciendo clic manual sobre cualquier sensor en el mapa, éste cambiará a un marcador
+                                    verde brillante. Significa que ha pasado a formar parte de tu lista estricta de
+                                    <strong>"Estaciones manuales deseadas"</strong>.
+                                </li>
+                                <li>Puedes usar las formas integradas dentro del mapa (El botón del Hexágono, Cuadrado)
+                                    de la barra de la izquierda para dibujar tú mismo el sector sobre el visor de mapas
+                                    del cual te interesa buscar información de sensores simultáneos.</li>
+                            </ul>
+                            <div class="alert alert-info shadow-sm border-0 border-start border-4 border-info">
+                                <strong>Tip:</strong> Una vez hayas armado tu búsqueda usando el Panel y el Mapa, dale
+                                al botón grandote y azul que dice <code>"Aplicar Filtros"</code> de la barra izquierda
+                                para solicitarle los datos oficiales al servidor.
+                            </div>
+
+                            <!-- Imagen de Data/Filtros -->
+                            <div class="text-center mt-4">
+                                <img src="/public/img/dashboard_filters.png" alt="Vista de radio espacial y filtros"
+                                    class="img-fluid rounded shadow border"
+                                    style="max-height: 400px; width: 100%; object-fit: contain;">
+                                <p class="text-muted small mt-2">Figura 2: Selector espacial aplicando un radio de
+                                    búsqueda en el mapa.</p>
+                            </div>
+                        </div>
+
+                        <!-- Tabla y Exportaciones -->
+                        <div class="mb-5">
+                            <h4 class="fw-bold"><i class="fas fa-table text-primary me-2"></i>3. Resultados, Tablas y
+                                Descargas</h4>
+                            <p>Cuando el servidor recibe y acepta tus requerimientos de filtrado, la tarjeta inferior
+                                tomará vida propia:</p>
+                            <ul>
+                                <li>Se activará inmediatamente una "Grilla de visualización rápida", soportada sobre un
+                                    motor dinámico <strong>con estilo analítico (Power BI / Power Query)</strong>. Este
+                                    nuevo diseño te permite:</li>
+                                <ul>
+                                    <li>Visualizar instantáneamente la salud de la columna con el % de <strong>Válidos,
+                                            Errores y Vacíos</strong>.</li>
+                                    <li>Un minigráfico en la cabecera mostrando la frecuencia de los datos.</li>
+                                    <li>El botón de <code>Alternar Orden [↕]</code> al inicio de cada cabecera. Es de un
+                                        solo clic: pulsa una vez para ordenar ascendentemente, pulsa de nuevo para
+                                        intervertirlo.</li>
+                                </ul>
+                                <li>Del mismo modo, al tener información de tablas viva, se te habilitarán en la parte
+                                    superior derecha unos botones verdes del formato final al que gustas empaquetar tu
+                                    archivo (CSV, Excel o JSON en crudo).</li>
+                                <li>Al clicar cualquiera de uno, una ventana te pedirá unas estadísticas básicas
+                                    (Nombre, Qué uso le darás a estos datos...) obligatorias para motivos de
+                                    rastreabilidad técnica de la entidad antes de que el navegador comience la descarga
+                                    silenciosa.</li>
+                            </ul>
+
+                            <!-- Imagen de la Tabla DataTables -->
+                            <div class="text-center mt-4">
+                                <img src="/public/img/dashboard_table_1.png"
+                                    alt="Vista de la grilla poblada de datos con estilo Power BI"
+                                    class="img-fluid rounded shadow border"
+                                    style="max-height: 400px; width: 100%; object-fit: contain;">
+                                <p class="text-muted small mt-2">Figura 3: Renderizado de la tabla interactiva mostrando
+                                    estadísticas de columna y datos filtrados.</p>
+                            </div>
+                        </div>
+
+                        <!-- Accesibilidad -->
+                        <div class="mb-3">
+                            <h4 class="fw-bold"><i class="fas fa-wheelchair text-info me-2"></i>4. Controles de
+                                Inclusión Biológica (WCAG)</h4>
+                            <p>Si miras en la esquina inferior izquierda verás el clásico logotipo de inclusión
+                                universal (Persona en silla de ruedas). Con solo hacerle clic, un abanico se desplegará
+                                hacia arriba mostrando accesos inmediatos y temporales que puedes aplicar a cualquier
+                                elemento del dashboard para garantizar el entendimiento web universal bajo
+                                especificaciones <code>WCAG 2.1</code>:</p>
+                            <ul>
+                                <li>Visor adaptado a Disléxicos.</li>
+                                <li>Conversión total de colores a perfiles de Alto Contraste y Escala de Grises para
+                                    ceguera daltoniana.</li>
+                                <li>Aumento paulatino de fuentes y del tamaño del puntero del ratón en tiempo real.</li>
+                            </ul>
+
+                            <!-- Imagen de la Tabla DataTables -->
+                            <div class="text-center mt-4">
+                                <img src="/public/img/dashboard_wcag_1.png" alt="Controles WCAG Abiertos"
+                                    class="img-fluid rounded shadow border"
+                                    style="max-height: 400px; width: 100%; object-fit: contain;">
+                                <p class="text-muted small mt-2">Figura 4: Panel de controles de accesibilidad WCAG
+                                    desplegado interactivo.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

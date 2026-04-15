@@ -1,0 +1,8 @@
+Dashboard: https://sama-dashboard-372574562914.us-central1.run.app
+           https://sama-dashboard-372574562914.us-central1.run.app
+
+API: https://sama-api-372574562914.us-central1.run.app
+https://sama-api-fevro3zdta-uc.a.run.app
+
+Logs: https://sama-dashboard-372574562914.us-central1.run.app/downloads.log
+      https://sama-dashboard-372574562914.us-central1.run.app/downloads.log

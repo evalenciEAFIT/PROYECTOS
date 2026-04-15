@@ -1,0 +1,773 @@
+/* =============================================================================
+   ANIMATIONS - VISOR CARTOGRÁFICO
+   =============================================================================
+   Biblioteca completa de animaciones y micro-interacciones premium.
+   Incluye: entrada, salida, loading, hover effects, y transiciones suaves.
+============================================================================= */
+
+/* =============================================================================
+   KEYFRAMES - ANIMACIONES BASE
+============================================================================= */
+
+/* Fade In */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Fade Out */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* Slide In Up */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide In Down */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide In Left */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide In Right */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Scale In */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Scale Out */
+@keyframes scaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Bounce In */
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Pulse */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Subtle Pulse */
+@keyframes subtlePulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.02);
+        opacity: 0.9;
+    }
+}
+
+/* Shake */
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-5px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Shimmer (Loading effect) */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Gradient Shift */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Rotate */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Float */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Glow */
+@keyframes glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 5px rgba(245, 200, 0, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(245, 200, 0, 0.8);
+    }
+}
+
+/* Progress Bar Fill */
+@keyframes progressFill {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+/* Skeleton Loading */
+@keyframes skeletonLoading {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Ripple Effect */
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* =============================================================================
+   CLASES UTILITARIAS - ANIMACIONES
+============================================================================= */
+
+/* Fade Animations */
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+/* Slide Animations */
+.animate-slide-in-up {
+    animation: slideInUp 0.5s ease-out forwards;
+}
+
+.animate-slide-in-down {
+    animation: slideInDown 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.5s ease-out forwards;
+}
+
+/* Scale Animations */
+.animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+}
+
+.animate-scale-out {
+    animation: scaleOut 0.3s ease-out forwards;
+}
+
+/* Bounce Animation */
+.animate-bounce-in {
+    animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Pulse Animations */
+.animate-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-subtle-pulse {
+    animation: subtlePulse 3s ease-in-out infinite;
+}
+
+/* Shake Animation */
+.animate-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* Float Animation */
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Glow Animation */
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* Rotate Animation */
+.animate-rotate {
+    animation: rotate 2s linear infinite;
+}
+
+/* =============================================================================
+   STAGGER ANIMATIONS (Entrada escalonada)
+============================================================================= */
+
+.stagger-item {
+    opacity: 0;
+    animation: slideInUp 0.5s ease-out forwards;
+}
+
+.stagger-item:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stagger-item:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stagger-item:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.stagger-item:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.stagger-item:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.stagger-item:nth-child(6) {
+    animation-delay: 0.6s;
+}
+
+.stagger-item:nth-child(7) {
+    animation-delay: 0.7s;
+}
+
+.stagger-item:nth-child(8) {
+    animation-delay: 0.8s;
+}
+
+/* =============================================================================
+   LOADING STATES
+============================================================================= */
+
+/* Shimmer Loading Effect */
+.shimmer-loading {
+    background: linear-gradient(90deg,
+            #f0f0f0 0%,
+            #e0e0e0 50%,
+            #f0f0f0 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+}
+
+:root[data-theme="dark"] .shimmer-loading {
+    background: linear-gradient(90deg,
+            #2d3748 0%,
+            #1a1f26 50%,
+            #2d3748 100%);
+    background-size: 200% 100%;
+}
+
+/* Skeleton Loading */
+.skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.2) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+:root[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0.05) 50%,
+            rgba(255, 255, 255, 0) 100%);
+    background-size: 200% 100%;
+}
+
+/* Spinner */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(245, 200, 0, 0.2);
+    border-top-color: var(--dagran-gold);
+    border-radius: 50%;
+    animation: rotate 1s linear infinite;
+}
+
+/* Dots Loading */
+.dots-loading {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.dots-loading span {
+    width: 8px;
+    height: 8px;
+    background-color: var(--dagran-gold);
+    border-radius: 50%;
+    animation: pulse 1.4s ease-in-out infinite;
+}
+
+.dots-loading span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dots-loading span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dots-loading span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* =============================================================================
+   HOVER EFFECTS
+============================================================================= */
+
+/* Lift Effect */
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Grow Effect */
+.hover-grow {
+    transition: transform 0.3s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+/* Glow Effect */
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(245, 200, 0, 0.6);
+}
+
+/* Border Glow */
+.hover-border-glow {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-border-glow:hover {
+    border-color: var(--dagran-gold);
+    box-shadow: 0 0 10px rgba(245, 200, 0, 0.3);
+}
+
+/* Underline Effect */
+.hover-underline {
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+.hover-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--dagran-gold);
+    transition: width 0.3s ease;
+}
+
+.hover-underline:hover::after {
+    width: 100%;
+}
+
+/* Slide Background */
+.hover-slide-bg {
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease;
+}
+
+.hover-slide-bg::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(245, 200, 0, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.hover-slide-bg:hover::before {
+    left: 100%;
+}
+
+/* =============================================================================
+   RIPPLE EFFECT (Material Design)
+============================================================================= */
+
+.ripple-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+    animation: ripple 0.6s ease-out;
+}
+
+:root[data-theme="dark"] .ripple {
+    background-color: rgba(245, 200, 0, 0.3);
+}
+
+/* =============================================================================
+   TRANSICIONES SUAVES
+============================================================================= */
+
+/* Transición base para elementos interactivos */
+.smooth-transition {
+    transition: all 0.3s ease;
+}
+
+/* Transición rápida */
+.quick-transition {
+    transition: all 0.15s ease;
+}
+
+/* Transición lenta */
+.slow-transition {
+    transition: all 0.6s ease;
+}
+
+/* Transición con bounce */
+.bounce-transition {
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* =============================================================================
+   PROGRESS BARS
+============================================================================= */
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: rgba(245, 200, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--dagran-gold), var(--dagran-gold-hover));
+    border-radius: 4px;
+    animation: progressFill 1.5s ease-out forwards;
+}
+
+.progress-bar-animated {
+    background: linear-gradient(90deg,
+            var(--dagran-gold) 0%,
+            var(--dagran-gold-hover) 50%,
+            var(--dagran-gold) 100%);
+    background-size: 200% 100%;
+    animation: gradientShift 2s ease-in-out infinite;
+}
+
+/* =============================================================================
+   SCROLL ANIMATIONS
+============================================================================= */
+
+/* Fade in on scroll */
+.scroll-fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Slide in from left on scroll */
+.scroll-slide-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-slide-left.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Slide in from right on scroll */
+.scroll-slide-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.scroll-slide-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* =============================================================================
+   MODAL ANIMATIONS
+============================================================================= */
+
+.modal-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.modal-fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+.modal-slide-down {
+    animation: slideInDown 0.4s ease-out forwards;
+}
+
+.modal-scale-in {
+    animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* =============================================================================
+   CHART ANIMATIONS
+============================================================================= */
+
+/* Bar grow animation */
+.chart-bar-grow {
+    animation: progressFill 1s ease-out forwards;
+}
+
+/* Pie chart rotation */
+.chart-pie-rotate {
+    animation: rotate 1.5s ease-out forwards;
+}
+
+/* =============================================================================
+   ACCESSIBILITY - REDUCED MOTION
+============================================================================= */
+
+/* Respetar preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    .animate-pulse,
+    .animate-subtle-pulse,
+    .animate-float,
+    .animate-glow,
+    .animate-rotate {
+        animation: none !important;
+    }
+}
+
+/* =============================================================================
+   PERFORMANCE OPTIMIZATIONS
+============================================================================= */
+
+/* Hardware acceleration para animaciones */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimizar animaciones en móvil */
+@media (max-width: 767px) {
+
+    /* Reducir complejidad de animaciones */
+    .hover-lift:hover {
+        transform: translateY(-3px);
+    }
+
+    .hover-grow:hover {
+        transform: scale(1.03);
+    }
+
+    /* Desactivar animaciones pesadas */
+    .shimmer-loading,
+    .skeleton {
+        animation-duration: 2s;
+    }
+}
+
+/* =============================================================================
+   CUSTOM TIMING FUNCTIONS
+============================================================================= */
+
+:root {
+    --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+    --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+    --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+    --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+    --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- Awesome Markers -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/public/css/style.css?v=7">
+</head>
+
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link text-white me-2 p-0" id="toggleSidebarBtn" title="Ocultar/Mostrar Filtros" data-bs-toggle="tooltip">
+                    <i class="fas fa-bars-staggered fs-4"></i>
+                </button>
+                <span class="navbar-brand mb-0 h1 d-flex align-items-center text-white">
+                    SAMA <span class="fw-light ms-2 opacity-75">Data Dashboard</span>
+                </span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/manual" class="btn btn-outline-info btn-sm rounded-pill px-3 fw-semibold transition-all" target="_blank">
+                    <i class="fas fa-circle-question me-1"></i> Soporte
+                </a>
+                <div class="bg-white p-1 rounded-3 shadow-sm d-flex align-items-center">
+                    <img src="/public/img/logo.png" alt="Logo" style="height: 32px; width: auto; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-3 h-custom">
+        <div class="row h-100 flex-nowrap">
+            <!-- Sidebar: Filtros -->
+            <div id="sidebar" class="d-flex flex-column h-100"
+                style="width: 640px; min-width: 320px; max-width: 80%; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
+                <div class="card shadow-sm flex-fill">
+                    <div class="card-header bg-white">
+                        <h5 class="card-title mb-0"><i class="fas fa-filter text-primary me-2"></i>Filtros de Búsqueda
+                        </h5>
+                    </div>
+                    <div class="card-body overflow-auto">
+                        <form id="filterForm" class="accordion accordion-flush" id="filterAccordion">
+
+                            <!-- 1. TIEMPO -->
+                            <div class="accordion-item border rounded mb-2 shadow-sm">
+                                <h2 class="accordion-header" id="headingTime">
+                                    <button class="accordion-button p-3 fw-semibold text-dark"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseTime"
+                                        aria-expanded="true" aria-controls="collapseTime">
+                                        <i class="fas fa-clock text-primary me-2"></i> Temporalidad
+                                    </button>
+                                </h2>
+                                <div id="collapseTime" class="accordion-collapse collapse show"
+                                    aria-labelledby="headingTime">
+                                    <div class="accordion-body p-3">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold small d-flex justify-content-between">
+                                                <span>Rango de Fecha</span>
+                                                <span class="badge bg-secondary p-1">
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(1); return false;" title="Hoy"
+                                                        data-bs-toggle="tooltip">Hoy</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(3); return false;" title="3 Días"
+                                                        data-bs-toggle="tooltip">3d</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(7); return false;" title="1 Semana"
+                                                        data-bs-toggle="tooltip">Sem</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(15); return false;" title="15 Días"
+                                                        data-bs-toggle="tooltip">15d</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(30); return false;" title="1 Mes"
+                                                        data-bs-toggle="tooltip">Mes</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(90); return false;" title="Trimestre (90 días)"
+                                                        data-bs-toggle="tooltip">Tri</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(180); return false;" title="Semestre (180 días)"
+                                                        data-bs-toggle="tooltip">Sms</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate(365); return false;" title="Año (365 días)"
+                                                        data-bs-toggle="tooltip">Año</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="setPresetDate('all'); return false;"
+                                                        title="Todo el histórico" data-bs-toggle="tooltip">Todo</a>
+                                                </span>
+                                            </label>
+                                            <div class="row gx-2">
+                                                <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                                    <div class="form-floating"
+                                                        title="Selecciona la fecha y hora de inicio para los datos"
+                                                        data-bs-toggle="tooltip">
+                                                        <input type="datetime-local"
+                                                            class="form-control form-control-sm" id="startTime"
+                                                            required>
+                                                        <label for="startTime"
+                                                            style="font-size: 0.8rem; padding-top: 0.8rem;">Fecha
+                                                            Inicio</label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6">
+                                                    <div class="form-floating"
+                                                        title="Selecciona la fecha y hora final para los datos"
+                                                        data-bs-toggle="tooltip">
+                                                        <input type="datetime-local"
+                                                            class="form-control form-control-sm" id="endTime" required>
+                                                        <label for="endTime"
+                                                            style="font-size: 0.8rem; padding-top: 0.8rem;">Fecha
+                                                            Fin</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold small">Agrupación de Tiempo</label>
+                                            <select class="form-select form-select-sm" id="aggregateSelect"
+                                                title="Elije cómo agrupar los datos en el tiempo (útil para series largas)"
+                                                data-bs-toggle="tooltip">
+                                                <option value="" selected>Sin Agrupar (Crudo)</option>
+                                                <option value="15m">15 Minutos</option>
+                                                <option value="30m">30 Minutos</option>
+                                                <option value="1h">1 Hora</option>
+                                                <option value="6h">6 Horas</option>
+                                                <option value="12h">12 Horas</option>
+                                                <option value="1d">1 Día</option>
+                                                <option value="3d">3 Días</option>
+                                                <option value="1 week">1 Semana</option>
+                                                <option value="1 month">1 Mes</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 2. UBICACION Y ESPACIO -->
+                            <div class="accordion-item border rounded mb-2 shadow-sm">
+                                <h2 class="accordion-header" id="headingLocation">
+                                    <button class="accordion-button p-3 fw-semibold text-dark collapsed"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseLocation"
+                                        aria-expanded="false" aria-controls="collapseLocation">
+                                        <i class="fas fa-location-dot text-success me-2"></i> Área Geográfica
+                                    </button>
+                                </h2>
+                                <div id="collapseLocation" class="accordion-collapse collapse"
+                                    aria-labelledby="headingLocation">
+                                    <div class="accordion-body p-3">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold small d-flex justify-content-between">
+                                                Región
+                                                <span class="badge bg-secondary p-1">
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="selectAllRegions(); return false;">Todas</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="clearRegions(); return false;">Ninguna</a>
+                                                </span>
+                                            </label>
+                                            <select class="form-select form-select-sm mb-2" id="regionSelect" multiple
+                                                style="height: 80px;"
+                                                title="Filtra las estaciones por subregión de Antioquia. Usa Ctrl/Cmd para seleccionar varias"
+                                                data-bs-toggle="tooltip">
+                                                <!-- Options populated by JS -->
+                                            </select>
+                                            <label class="form-label fw-bold small d-flex justify-content-between">
+                                                Municipio
+                                                <span class="badge bg-secondary p-1">
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="selectAllMunicipios(); return false;">Todos</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="clearMunicipios(); return false;">Ninguno</a>
+                                                </span>
+                                            </label>
+                                            <select class="form-select form-select-sm" id="municipioSelect" multiple
+                                                style="height: 80px;"
+                                                title="Filtra las estaciones por municipio. Usa Ctrl/Cmd para seleccionar varios"
+                                                data-bs-toggle="tooltip">
+                                                <!-- Options populated by JS -->
+                                            </select>
+                                        </div>
+                                        <hr class="my-2">
+                                        <div class="mb-1">
+                                            <label
+                                                class="form-label fw-bold small d-flex justify-content-between align-items-center">
+                                                <span>Punto de Interés (Geo-Radio)</span>
+                                                <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2"
+                                                    style="font-size: 0.70rem;"
+                                                    onclick="clearGeoFilter(); return false;" title="Borrar círculo"
+                                                    data-bs-toggle="tooltip">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </label>
+                                            <div class="input-group input-group-sm mb-0">
+                                                <span class="input-group-text d-none d-md-flex"
+                                                    style="font-size: 0.75rem;"><i
+                                                        class="fas fa-crosshairs me-1"></i></span>
+                                                <input type="text" class="form-control" id="pointLat"
+                                                    placeholder="Lat (6.24)"
+                                                    title="Latitud central del área de búsqueda (se autocompleta con clic en el mapa)"
+                                                    data-bs-toggle="tooltip">
+                                                <input type="text" class="form-control" id="pointLng"
+                                                    placeholder="Lng (-75.5)"
+                                                    title="Longitud central del área de búsqueda (se autocompleta con clic en el mapa)"
+                                                    data-bs-toggle="tooltip">
+                                                <input type="number" class="form-control" id="radiusKm"
+                                                    placeholder="Radio" value="5" style="max-width: 80px;"
+                                                    title="Radio de búsqueda en kilómetros alrededor del punto central"
+                                                    data-bs-toggle="tooltip">
+                                                <span class="input-group-text px-1 px-md-2"
+                                                    style="font-size: 0.75rem;">Km</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 3. SENSORES Y VARIABLES -->
+                            <div class="accordion-item border rounded mb-3 shadow-sm">
+                                <h2 class="accordion-header" id="headingSensors">
+                                    <button class="accordion-button p-3 fw-semibold text-dark collapsed"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseSensors"
+                                        aria-expanded="false" aria-controls="collapseSensors">
+                                        <i class="fas fa-microchip text-info me-2"></i> Estaciones y Sensores
+                                    </button>
+                                </h2>
+                                <div id="collapseSensors" class="accordion-collapse collapse"
+                                    aria-labelledby="headingSensors">
+                                    <div class="accordion-body p-3">
+                                        <div class="mb-3">
+                                            <label
+                                                class="form-label fw-bold small d-flex justify-content-between align-items-center">
+                                                <span>Estaciones seleccionadas</span>
+                                                <button type="button" class="btn btn-outline-danger btn-sm py-0 px-2"
+                                                    style="font-size:0.70rem;" id="clearSelectionBtn"
+                                                    title="Anular Estaciones Específicas" data-bs-toggle="tooltip">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </label>
+                                            <div class="border rounded p-2 text-primary"
+                                                style="font-size: 0.75rem; background:#f8f9fa; max-height:80px; overflow-y:auto;"
+                                                id="selectedStationsList">
+                                                <em class="text-muted">Seleccione la estación en el Mapa o selecione
+                                                    filtros espaciales</em>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold small d-flex justify-content-between">
+                                                Tipo de Estación
+                                                <span class="badge bg-secondary p-1">
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="selectAllStationTypes(); return false;">Todas</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="clearStationTypes(); return false;">Ninguna</a>
+                                                </span>
+                                            </label>
+                                            <select class="form-select form-select-sm" id="stationTypeSelect" multiple
+                                                style="height: 85px;"
+                                                title="Filtra por tipo de estación (Nivel, Pluviómetro, Ambiental). Usa Ctrl/Cmd para selección múltiple"
+                                                data-bs-toggle="tooltip">
+                                                <!-- Options populated by JS -->
+                                            </select>
+                                        </div>
+                                        <div class="mb-1">
+                                            <label class="form-label fw-bold small d-flex justify-content-between">
+                                                Lista de Variables
+                                                <span class="badge bg-secondary p-1">
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="selectAllVariables(); return false;">Todas</a>|
+                                                    <a href="#" class="text-white text-decoration-none px-1"
+                                                        onclick="clearVariables(); return false;">Ninguna</a>
+                                                </span>
+                                            </label>
+                                            <select class="form-select form-select-sm mb-1" id="variableSelect" multiple
+                                                style="height: 120px;"
+                                                title="Selecciona las variables hidro-meteorológicas a consultar. Usa Ctrl/Cmd para selección múltiple"
+                                                data-bs-toggle="tooltip">
+                                                <!-- Options populated by JS -->
+                                            </select>
+                                            <div class="form-text" style="font-size: 0.70rem; line-height: 1;">(Mantén
+                                                Ctrl/Cmd para selección múltiple)</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- BOTON EJECUCION -->
+                            <button type="submit"
+                                class="btn btn-primary w-100 py-2 d-flex justify-content-center align-items-center fw-bold shadow-sm"
+                                id="searchBtn" style="font-size: 1.05rem; letter-spacing: 0.5px;"
+                                title="Aplica los filtros seleccionados y realiza la consulta en la base de datos"
+                                data-bs-toggle="tooltip">
+                                <i class="fas fa-search me-2"></i> Aplicar Filtros
+                            </button>
+
+                            <!-- RESUMEN DE FILTROS APLICADOS -->
+                            <div class="mt-3 d-none p-3 border rounded border-primary bg-light shadow-sm"
+                                id="filterSummaryContainer">
+                                <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.85rem;">
+                                    <i class="fas fa-clipboard-list me-1"></i> Resumen de Selección
+                                </h6>
+                                <div id="filterSummaryContent" class="text-secondary"
+                                    style="font-size: 0.8rem; line-height: 1.5;">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resizer Horizontal -->
+            <div class="resizer-h" id="resizer-h" title="Arrastra para ajustar el ancho" data-bs-toggle="tooltip">
+                <i class="fas fa-ellipsis-v text-muted" style="pointer-events: none;"></i>
+            </div>
+
+            <!-- Main Content: Mapa & Datos -->
+            <div class="col d-flex flex-column h-100 overflow-hidden" id="main-content" style="min-width: 0;">
+                <!-- Visor Cartográfico -->
+                <div class="card shadow-sm mb-0 d-flex flex-column" id="map-container" style="flex: none; height: 50%; min-height: 200px;">
+                    <div class="card-header bg-white py-2">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-map-marker-alt text-danger me-2"></i>Estaciones</h6>
+                    </div>
+                    <div id="map" class="flex-grow-1 rounded-bottom border-0"></div>
+                </div>
+
+                <!-- Resizer Vertical -->
+                <div class="resizer-v my-1" id="resizer-v" title="Arrastra para ajustar el alto" data-bs-toggle="tooltip">
+                    <i class="fas fa-ellipsis-h text-muted" style="pointer-events: none;"></i>
+                </div>
+
+                <!-- Visor de Tabla / Resultados -->
+                <div class="card shadow-sm flex-fill d-flex flex-column overflow-hidden" id="table-container" style="min-height: 200px;">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold"><i class="fas fa-file-download text-success me-2"></i>Formato de
+                            descarga en archivo</h6>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-success btn-sm" id="exportCsvBtn" disabled
+                                title="Exporta los datos de la tabla resultante a formato CSV" data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                                <i class="fas fa-file-csv me-1"></i> CSV
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" id="exportExcelBtn" disabled
+                                title="Exporta los datos de la tabla resultante a formato Excel (.xlsx)"
+                                data-bs-toggle="tooltip" data-bs-placement="top">
+                                <i class="fas fa-file-excel me-1"></i> Excel
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" id="exportJsonBtn" disabled
+                                title="Exporta los datos de la tabla resultante a formato JSON" data-bs-toggle="tooltip"
+                                data-bs-placement="top">
+                                <i class="fas fa-file-code me-1"></i> JSON
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 overflow-auto">
+                        <table class="table table-sm power-bi-table w-100" id="resultsTable"
+                            style="margin: 0 !important; width: 100% !important;">
+                            <thead class="sticky-top bg-white">
+                                <tr id="tableHeaderRow">
+                                    <th>Fecha / Tiempo</th>
+                                    <th>Cód. Estación</th>
+                                    <th>Tipo</th>
+                                    <th>Latitud</th>
+                                    <th>Longitud</th>
+                                    <th>Variable</th>
+                                    <th>Unidad</th>
+                                    <th>Valor</th>
+                                    <th>Calidad</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <tr>
+                                    <td colspan="9" class="py-4 text-muted border-0 text-center">Selecciona los filtros
+                                        y haz clic en "Aplicar Filtros" para comenzar</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Paginador -->
+                        <div class="d-flex justify-content-center mt-2 d-none" id="loader">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles de Accesibilidad Flotantes -->
+    <div class="position-fixed start-0 bottom-0 mb-4 ms-3 d-flex flex-column-reverse align-items-center gap-2"
+        style="z-index: 9999;">
+        <!-- Botón maestro para revelar/ocultar panel de accesibilidad -->
+        <button class="btn btn-primary rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+            type="button" data-bs-toggle="collapse" data-bs-target="#accessibilityPanel" aria-expanded="false"
+            aria-controls="accessibilityPanel" title="Herramientas de Accesibilidad (WCAG 2.1)" data-bs-toggle="tooltip"
+            data-bs-placement="right" style="width: 48px; height: 48px; font-size: 1.3rem;">
+            <i class="fas fa-wheelchair"></i>
+        </button>
+
+        <!-- Panel de controles colapsable -->
+        <div class="collapse" id="accessibilityPanel">
+            <div class="accessibility-controls bg-dark text-white p-2 rounded shadow-lg d-flex flex-column align-items-center gap-2"
+                style="border: 1px solid #555; background-color: #343a40 !important;">
+                <button class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                    id="toggleContrastBtn" title="Contraste" data-bs-toggle="tooltip" data-bs-placement="right"
+                    style="width:36px; height:36px;">
+                    <i class="fas fa-adjust"></i>
+                </button>
+                <button class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                    id="toggleGrayscaleBtn" title="Escala de grises" data-bs-toggle="tooltip" data-bs-placement="right"
+                    style="width:36px; height:36px;">
+                    <i class="fas fa-eye-slash"></i>
+                </button>
+                <button class="btn btn-light btn-sm rounded-circle d-flex align-items-center justify-content-center"
+                    id="toggleHighlightLinksBtn" title="Resaltar Enlaces" data-bs-toggle="tooltip"
+                    data-bs-placement="right" style="width:36px; height:36px;">
+                    <i class="fas fa-underline"></i>
+                </button>
+                <button class="btn btn-light btn-sm rounded d-flex align-items-center justify-content-center fw-bold"
+                    id="decreaseTextBtn" title="Disminuir texto" data-bs-toggle="tooltip" data-bs-placement="right"
+                    style="width:36px; height:36px; font-size:1.1rem;">
+                    A-
+                </button>
+                <button class="btn btn-light btn-sm rounded d-flex align-items-center justify-content-center fw-bold"
+                    id="increaseTextBtn" title="Aumentar texto" data-bs-toggle="tooltip" data-bs-placement="right"
+                    style="width:36px; height:36px; font-size:1.1rem;">
+                    A+
+                </button>
+                <button
+                    class="btn btn-info btn-sm rounded-circle d-flex align-items-center justify-content-center text-white"
+                    id="accessibilityInfoBtn" title="Información de Accesibilidad WCAG 2.1" data-bs-toggle="tooltip"
+                    data-bs-placement="right" style="width:36px; height:36px;">
+                    <i class="fas fa-universal-access"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <!-- jQuery y DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="/public/js/app.js?v=22"></script>
+</body>
+
+</html>

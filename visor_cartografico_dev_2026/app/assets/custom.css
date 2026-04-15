@@ -1,0 +1,1089 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+/* ========================================
+   DAGRAN BRAND COLORS
+   ======================================== */
+:root {
+    --dagran-navy: #0a2240;
+    --dagran-gold: #c29800;
+    --dagran-gold-light: rgba(194, 152, 0, 0.1);
+    --dagran-gold-hover: #9c7a00;
+    --dagran-navy-light: rgba(10, 34, 64, 0.05);
+    /* Lighter for backgrounds */
+    --dagran-navy-hover: #081a32;
+    --text-primary: #0a2240;
+    --text-secondary: #4a5568;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-soft: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* --- DAGRAN UTILITIES --- */
+.text-navy {
+    color: var(--dagran-navy) !important;
+}
+
+.text-gold {
+    color: var(--dagran-gold) !important;
+}
+
+/* Primary Button (Gold) */
+.btn-dagran-primary {
+    background-color: var(--dagran-gold);
+    color: var(--dagran-navy);
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(245, 200, 0, 0.3);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    width: 100%;
+}
+
+.btn-dagran-primary:hover {
+    background-color: var(--dagran-gold-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 200, 0, 0.4);
+}
+
+.btn-dagran-primary:active {
+    transform: translateY(0);
+}
+
+/* Secondary Button / Icon Button */
+.btn-dagran-icon {
+    background-color: var(--dagran-gold-light);
+    color: var(--dagran-gold);
+    /* Gold icon */
+    font-weight: bold;
+    border: none;
+    padding: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn-dagran-icon:hover {
+    background-color: var(--dagran-gold);
+    color: var(--dagran-navy);
+    /* Navy icon on hover */
+}
+
+/* Alert Box */
+.dagran-alert {
+    background-color: var(--dagran-gold);
+    color: var(--dagran-navy);
+    padding: 10px 20px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-hover);
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar Header */
+.sidebar-header {
+    margin: 0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    font-weight: 600;
+}
+
+/* Sidebar Section Container */
+.sidebar-section {
+    margin-bottom: 20px;
+}
+
+/* Global Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f0f2f5;
+    overflow: hidden;
+    /* Prevent body scroll, let map handle it */
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Modern Table Styles */
+.modern-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modern-table thead th {
+    background-color: #e9ecef !important;
+    color: var(--dagran-navy) !important;
+    font-weight: bold;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.modern-table tbody td {
+    padding: 12px;
+    border-bottom: 1px solid #dee2e6;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.modern-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.modern-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Modern Dropdown Container */
+.modern-dropdown-container {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Layout Containers */
+.ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    /* Let clicks pass through to map where not covered */
+    display: flex;
+    flex-direction: column;
+    z-index: 2000;
+    /* Ensure UI floats above map and dashboard */
+}
+
+/* Glassmorphism Panel */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    pointer-events: auto;
+    /* Re-enable clicks */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Header Removed - using Floating Containers inline */
+
+/* Left: Menu Toggle */
+.sidebar-toggle {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* Center: Search Container */
+.search-container {
+    display: flex;
+    align-items: center;
+}
+
+/* Dash Dropdown Styling Override */
+.search-dropdown .Select-control {
+    background-color: #f3f4f6;
+    border: none;
+    border-radius: 44px;
+    height: 38px;
+}
+
+.search-dropdown .Select-control:focus-within {
+    border: 1px solid var(--dagran-gold);
+    /* Gold accent for focus */
+    box-shadow: 0 0 0 2px var(--dagran-gold-light);
+}
+
+.search-dropdown .Select-placeholder {
+    color: #888;
+    line-height: 38px;
+}
+
+.search-dropdown .Select-value-label {
+    line-height: 38px;
+    color: var(--dagran-navy);
+    /* Navy */
+}
+
+
+/* Right: Logo Area */
+.logo-area {
+    /* Flex handled inline in app.py now */
+    display: none;
+}
+
+/* Sidebar - "OPCION" */
+.sidebar {
+    position: absolute;
+    /* Fix: Take out of flow to avoid flex issues */
+    top: 130px;
+    /* Below the floating header */
+    left: 20px;
+    /* Align with floating header left margin */
+    bottom: 20px;
+    /* Spacing from bottom */
+    width: 420px;
+    background: rgba(255, 255, 255, 0.98);
+    /* Glass effect */
+    backdrop-filter: blur(15px);
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 10px 1.5rem 0;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+    border-radius: 16px;
+    /* Floating card look */
+    /* border-right: 1px solid rgba(0, 0, 0, 0.1); remove border right since it is floating now */
+    pointer-events: auto;
+    z-index: 1002;
+    /* Above map */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar.collapsed {
+    transform: translateX(-120%);
+    /* Move further left to hide completely including margin */
+    opacity: 0;
+}
+
+.menu-item {
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #4a5568;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    font-weight: 500;
+    margin: 0 10px;
+    border-radius: 8px;
+}
+
+.menu-item:hover,
+.menu-item.active {
+    color: var(--dagran-navy);
+    /* Navy Strong */
+    background: var(--dagran-gold-light);
+    transform: translateX(5px);
+}
+
+.menu-item.active {
+    background: #eef4ff;
+    color: #0d6efd;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.menu-item i {
+    font-size: 1.3rem;
+    color: #718096;
+    transition: color 0.2s;
+}
+
+.menu-item:hover i,
+.menu-item.active i {
+    color: var(--dagran-gold);
+}
+
+/* Map specific */
+.map-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+/* Floating UI Components */
+.floating-header-container {
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1010;
+    pointer-events: none;
+}
+
+.float-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2px 20px;
+    border-radius: 50px;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    pointer-events: auto;
+    height: fit-content;
+    margin-top: 10px;
+    /* Float spacing */
+}
+
+.float-card {
+    display: flex;
+    align-items: center;
+    border-radius: 0 0 24px 24px;
+    /* Tab shape */
+    padding: 0.5rem 2rem;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    pointer-events: auto;
+}
+
+/* Sidebar Footer */
+.nav-footer {
+    margin-top: auto;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.info-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--dagran-navy);
+}
+
+
+
+/* Push Top controls down to clear Floating Header */
+.leaflet-bottom {
+    top: 180px;
+}
+
+/* Adjust Left controls alignment */
+.leaflet-right {
+    left: 150px;
+}
+
+/* Help Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 3000;
+    /* Highest priority */
+    display: none;
+    /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    z-index: 100;
+    /* Ensure it is on top */
+}
+
+.close-button:hover {
+    color: var(--dagran-navy);
+}
+
+/* Tooltip Custom Style */
+.custom-tooltip {
+    background-color: white !important;
+    border: 1.5px solid white !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+    border-radius: 8px !important;
+    padding: 0.5cm !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.8rem !important;
+    opacity: 1 !important;
+}
+
+.fixed-right-tooltip {
+    position: fixed !important;
+    top: 50% !important;
+    right: 20px !important;
+    left: auto !important;
+    transform: translateY(-50%) !important;
+    z-index: 10000 !important;
+    /* Encima de todo */
+    margin: 0 !important;
+    max-width: 350px !important;
+    pointer-events: none !important;
+    /* Que no bloquee clicks debajo */
+}
+
+/* Ocultar las flechas de Leaflet para que parezca un panel flotante limpio */
+.fixed-right-tooltip::before,
+.fixed-right-tooltip::after {
+    display: none !important;
+}
+
+.custom-tooltip .leaflet-tooltip-content {
+    margin: 0 !important;
+}
+
+.tooltip-header {
+    background-color: var(--dagran-gold-light);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--dagran-gold);
+    font-weight: bold;
+    border-radius: 8px 8px 0 0;
+    color: var(--dagran-navy);
+}
+
+.tooltip-body {
+    padding: 10px 12px;
+    color: #333;
+}
+
+.tooltip-section {
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 5px;
+}
+
+.tooltip-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.tooltip-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 2px;
+    display: block;
+}
+
+.tooltip-value {
+    color: #000;
+}
+
+.tooltip-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tooltip-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+}
+
+.tooltip-list li span:first-child {
+    color: #666;
+}
+
+/* App Footer */
+.app-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 8px 25px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    color: var(--dagran-navy);
+    pointer-events: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    backdrop-filter: blur(5px);
+}
+
+.footer-logo {
+    height: 30px;
+    width: auto;
+    display: block;
+}
+
+.chart-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 15px;
+    border: 1px solid #eee;
+}
+
+/* --- Responsive Design --- */
+
+/* Responsive Chart Container */
+.chart-container-responsive {
+    flex: 1;
+    min-width: 450px;
+}
+
+/* Mobile Warning Alert (hidden by default) */
+.mobile-warning-alert {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(10, 34, 64, 0.6); /* Semi-transparent navy backdrop */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.mobile-warning-card {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    border-top: 5px solid #f5c800; /* Dagran yellow highlight */
+}
+
+/* Tablet and smaller (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .mobile-warning-alert {
+        display: flex !important;
+    }
+
+    .sidebar {
+        width: 220px;
+    }
+
+    .chart-container-responsive {
+        min-width: 100%;
+        /* Stack charts on tablet */
+    }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+
+    /* Header Adjustments */
+    /* Header Adjustments */
+    .floating-header-container {
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        right: 10px;
+        left: 10px;
+        pointer-events: none;
+    }
+
+    .float-card {
+        padding: 0.2rem 0.5rem;
+        margin-top: 0;
+        align-self: flex-start;
+        border-radius: 12px;
+    }
+
+    .float-pill {
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        max-width: calc(100vw - 20px) !important;
+        box-sizing: border-box;
+        overflow: hidden;
+        padding: 5px 10px !important;
+        margin-bottom: 5px;
+    }
+
+    /* Ocultar elementos secundarios para ahorrar espacio */
+    .search-container span.text-navy,
+    .wcag-container {
+        display: none !important;
+    }
+
+    /* Search Dropdown on Mobile */
+    .search-container {
+        flex: 1;
+        min-width: 0;
+        padding-left: 5px !important;
+        margin-left: 5px !important;
+        border-left: none !important;
+    }
+
+    .search-container .modern-dropdown {
+        width: 100% !important;
+        min-width: 0;
+    }
+
+    .btn-dagran-icon {
+        padding: 0 10px !important;
+        margin-left: 5px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .logo-area img,
+    .float-card img {
+        height: 35px !important;
+    }
+
+    /* Sidebar Mobile Overhaul */
+    .sidebar {
+        position: fixed;
+        /* Fixed to cover screen if needed or partial */
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 85%;
+        /* Mostly full width */
+        max-width: 300px;
+        height: 100vh;
+        border-radius: 0;
+        /* No rounded corners on full height sidebar */
+        z-index: 2500;
+        /* Higher than everything */
+        transform: translateX(-100%);
+        /* Start hidden */
+        transition: transform 0.3s ease-in-out;
+        margin: 0;
+        /* Remove margin */
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+    }
+
+    /* Add an overlay when sidebar is open on mobile */
+    .sidebar-overlay {
+        display: none;
+        /* Default hidden */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2400;
+        /* Just below sidebar */
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Map Legend on Mobile */
+    .map-legend {
+        bottom: 30px;
+        right: 10px;
+        max-width: 150px;
+        font-size: 0.8rem;
+    }
+
+    /* Footer adjustments */
+    .app-footer {
+        width: 90%;
+        justify-content: center;
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        bottom: 10px;
+    }
+
+    /* Adjust page padding for mobile */
+    .page-container {
+        padding-top: 160px !important;
+        /* More space for stacked header */
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+    }
+
+    /* Font sizes */
+    h1 {
+        font-size: 1.4rem !important;
+    }
+
+    h4 {
+        font-size: 1rem !important;
+    }
+
+    .menu-item {
+        padding: 0.8rem 1rem;
+    }
+
+    /* Modal adjustments */
+    .modal-content {
+        width: 95%;
+        padding: 1rem;
+        max-height: 70vh;
+    }
+
+    /* Leaflet controls */
+    .leaflet-bottom {
+        top: auto;
+        bottom: 80px;
+    }
+
+    /* Move scale/attribution up above footer */
+    .leaflet-right {
+        right: 10px;
+        left: auto;
+    }
+
+    /* Selection Alert Mobile Position */
+    #selection-alert {
+        top: 200px !important;
+        /* Move down to clear stacked header */
+        width: 80%;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+}
+
+/* Analysis Dashboard Modern Styles */
+.hover-card {
+    transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.list-row-hover:hover {
+    background-color: #f8f9fa !important;
+}
+
+.inner-shadow {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Dagran Elegant Tooltip Styles */
+.dagran-tooltip {
+    opacity: 1 !important;
+    /* Ensure visibility */
+    z-index: 10000 !important;
+    /* Force on top of everything */
+}
+
+.dagran-tooltip .tooltip-inner {
+    background-color: var(--dagran-navy) !important;
+    color: #ffffff !important;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(10, 34, 64, 0.25);
+    max-width: 320px;
+    text-align: left;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Arrow styling for different placements - Dark Navy to match body */
+.dagran-tooltip.bs-tooltip-end .tooltip-arrow::before,
+.dagran-tooltip.bs-tooltip-auto[data-popper-placement^=right] .tooltip-arrow::before {
+    border-right-color: var(--dagran-navy) !important;
+}
+
+.dagran-tooltip.bs-tooltip-start .tooltip-arrow::before,
+.dagran-tooltip.bs-tooltip-auto[data-popper-placement^=left] .tooltip-arrow::before {
+    border-left-color: var(--dagran-navy) !important;
+}
+
+.dagran-tooltip.bs-tooltip-top .tooltip-arrow::before,
+.dagran-tooltip.bs-tooltip-auto[data-popper-placement^=top] .tooltip-arrow::before {
+    border-top-color: var(--dagran-navy) !important;
+}
+
+.dagran-tooltip.bs-tooltip-bottom .tooltip-arrow::before,
+.dagran-tooltip.bs-tooltip-auto[data-popper-placement^=bottom] .tooltip-arrow::before {
+    border-bottom-color: var(--dagran-navy) !important;
+}
+
+/* --- Right Dashboard Panel --- */
+.right-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 450px;
+    /* Slightly wider for charts */
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(15px);
+    z-index: 1005;
+    /* Above map (0) but below modals (3000) and tooltips (10000) */
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+    /* Hidden by default */
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.right-panel.open {
+    transform: translateX(0);
+}
+
+.toggle-right-btn {
+    /* Position reset for Flexbox placement in Header */
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-right: 20px;
+    /* Requested distance */
+    z-index: 1010;
+    /* Above panel when closed, or part of UI */
+    background: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--dagran-navy);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+    height: 40px;
+    align-self: center;
+}
+
+.toggle-right-btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-right-btn i {
+    font-size: 1.2rem;
+}
+
+/* --- Modern Aesthetic Updates 2026 --- */
+
+.glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.modern-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modern-dropdown .Select-control {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.modern-dropdown .Select-placeholder {
+    color: var(--dagran-navy) !important;
+    font-weight: 500;
+}
+
+.sidebar-toggle:hover {
+    background-color: var(--dagran-navy-light) !important;
+    border-radius: 50%;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bdc3c7;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #95a5a6;
+}
+
+/* Tooltip Polish */
+.dagran-tooltip {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.85rem !important;
+    opacity: 1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+
+/* --- Premium KPI Cards --- */
+.kpi-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px -15px rgba(10, 34, 64, 0.15) !important;
+}
+
+/* Improved Chart Container */
+.chart-container {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    box-shadow: 0 15px 50px -15px rgba(0, 0, 0, 0.12);
+}
+
+/* Glossary Tooltip Enhancement */
+.tooltip.show {
+    opacity: 1 !important;
+}
+
+.tooltip-inner {
+    max-width: 380px !important;
+    text-align: left !important;
+    padding: 16px 20px !important;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-in {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Scroll to top button enhancements */
+.scroll-to-top-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px var(--dagran-gold-light) !important;
+    background-color: var(--dagran-gold-hover) !important;
+}
+
+.scroll-to-top-btn:active {
+    transform: translateY(-1px);
+}
+
+/* Manzana accordion item animations */
+.manzana-accordion-item {
+    transition: all 0.3s ease;
+}
+
+.manzana-accordion-item:hover {
+    transform: translateX(4px);
+}
+
+/* Search input focus effects */
+#manzana-search-input:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+}
+
+/* Dropdown custom styling */
+#manzana-sort-dropdown .Select-control {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+#manzana-sort-dropdown .Select-control:hover {
+    border-color: #10b981 !important;
+}
+
+/* Loading state animation */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.loading-pulse {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Smooth accordion transitions */
+.accordion-item {
+    transition: all 0.3s ease;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #f0f9ff !important;
+    color: #0f172a !important;
+}
+
+.accordion-button:focus {
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+    border-color: #10b981 !important;
+}

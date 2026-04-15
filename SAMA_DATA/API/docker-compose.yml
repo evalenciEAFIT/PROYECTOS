@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  sama_api:
+    build: .
+    container_name: sama_data_api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - TZ=America/Bogota
+    # Si quieres sobreescribir las variables de entorno sin usar el archivo .env interno
+    env_file:
+      - .env

@@ -1,0 +1,37 @@
+# =============================================================================
+# CONFIGURACIÓN DE DESPLIEGUE - GOOGLE APP ENGINE
+# =============================================================================
+# Este archivo define la configuración para desplegar la aplicación Dash
+# en Google Cloud Platform usando App Engine Standard Environment.
+
+# Runtime: Especifica la versión de Python a utilizar
+runtime: python312
+
+# Entrypoint: Comando para iniciar la aplicación
+# - gunicorn: Servidor WSGI de producción para aplicaciones Python
+# - -b :$PORT: Bind al puerto asignado dinámicamente por App Engine
+# - app.app:server: Módulo y objeto WSGI (app/app.py -> variable 'server')
+# - --timeout 120: Timeout de 120 segundos para requests largos (procesamiento de datos)
+entrypoint: gunicorn -b :$PORT app.app:server --timeout 120
+
+# Instance Class: Tipo de instancia de App Engine
+# F2 = 512MB RAM, 1.2GHz CPU (adecuado para aplicaciones con procesamiento moderado)
+instance_class: F2
+
+# Variables de Entorno
+# Configuraciones que se inyectan en el runtime de la aplicación
+env_variables:
+  # Desactiva el modo debug de Dash en producción (seguridad y performance)
+  DASH_DEBUG: "False"
+
+# Handlers: Reglas de enrutamiento de URLs
+handlers:
+  # Handler 1: Archivos estáticos (CSS, JS, imágenes)
+  - url: /assets
+    static_dir: app/assets  # Servir directamente desde el filesystem
+    secure: always          # Forzar HTTPS
+
+  # Handler 2: Todas las demás rutas (aplicación dinámica)
+  - url: /.*
+    script: auto            # Usar el entrypoint definido arriba
+    secure: always          # Forzar HTTPS

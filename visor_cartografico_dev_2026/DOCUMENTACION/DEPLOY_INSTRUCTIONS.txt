@@ -1,0 +1,44 @@
+GUÍA DE DESPLIEGUE - VISOR CARTOGRÁFICO
+=======================================
+
+PROYECTO: riesgosismico
+URL: https://riesgosismico.uc.r.appspot.com
+
+REQUISITOS PREVIOS
+------------------
+1. Tener Google Cloud SDK instalado.
+2. Estar autenticado con la cuenta correcta:
+   $ gcloud auth login edison.valencia.eafit@gmail.com
+
+OPCIÓN 1: DESPLIEGUE AUTOMÁTICO (RECOMENDADO)
+---------------------------------------------
+Hemos creado un script que automatiza el proceso. Simplemente ejecuta:
+
+   $ ./deploy.sh
+
+Este script se encarga de seleccionar el proyecto correcto y subir la aplicación.
+
+OPCIÓN 2: DESPLIEGUE MANUAL
+---------------------------
+Si prefieres hacerlo paso a paso:
+
+1. Configurar el proyecto:
+   $ gcloud config set project riesgosismico
+
+2. Desplegar la aplicación:
+   $ gcloud app deploy
+
+SOLUCIÓN DE PROBLEMAS COMUNES
+-----------------------------
+1. Error "service account ... does not have access to the bucket":
+   - Causa: Google Cloud tarda unos minutos en propagar los permisos nuevos a la cuenta de servicio.
+   - Solución: Espera 5-10 minutos y vuelve a intentar el despliegue.
+
+2. Error de Facturación:
+   - Si recibes un error indicando que el proyecto no tiene facturación, debes habilitarla en la consola de Google Cloud (console.cloud.google.com/billing).
+
+ARCHIVOS DE CONFIGURACIÓN IMPORTANTES
+-------------------------------------
+- app.yaml: Configuración del servidor (Python version, entrypoint).
+- requirements.txt: Lista de librerías necesarias.
+- .gcloudignore: Archivos que NO se suben a la nube (ahorra tiempo y espacio).

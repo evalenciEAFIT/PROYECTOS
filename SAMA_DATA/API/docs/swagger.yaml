@@ -1,0 +1,134 @@
+basePath: /
+definitions:
+  models.Measurement:
+    properties:
+      quality:
+        type: string
+      station_code:
+        type: string
+      timestamp:
+        type: string
+      value:
+        type: number
+      variable_name:
+        type: string
+      variable_unit:
+        type: string
+    type: object
+  models.PaginatedResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/models.Measurement'
+        type: array
+      limit:
+        type: integer
+      next_cursor:
+        type: string
+      offset:
+        type: integer
+      total_rows:
+        type: integer
+    type: object
+host: localhost:3000
+info:
+  contact: {}
+  description: High Performance TimeSeries Data Interface for SAMA IoT.
+  title: SAMA_DATA API
+  version: "1.0"
+paths:
+  /api/v1/measurements:
+    get:
+      consumes:
+      - application/json
+      description: retrieve measurements applying time, station, and variable filters.
+        Supports aggregation. Supports CSV/Excel export.
+      parameters:
+      - description: Start time (ISO8601)
+        in: query
+        name: start_time
+        type: string
+      - description: End time (ISO8601)
+        in: query
+        name: end_time
+        type: string
+      - description: Station codes (comma-separated)
+        in: query
+        name: station_code
+        type: string
+      - description: Variable names (comma-separated)
+        in: query
+        name: variable_name
+        type: string
+      - description: Time bucket (e.g., 15m, 1h, 1d)
+        in: query
+        name: aggregate
+        type: string
+      - description: Format (json, csv, excel)
+        in: query
+        name: format
+        type: string
+      - description: Limit (default 1000)
+        in: query
+        name: limit
+        type: integer
+      - description: Offset (default 0)
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      - text/csv
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.PaginatedResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get measurements with filters
+      tags:
+      - measurements
+  /api/v1/stations:
+    get:
+      consumes:
+      - application/json
+      description: get all available stations from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: List all stations
+      tags:
+      - stations
+  /api/v1/variables:
+    get:
+      consumes:
+      - application/json
+      description: get all available variables from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: List all variables
+      tags:
+      - variables
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: X-API-Key
+    type: apiKey
+swagger: "2.0"

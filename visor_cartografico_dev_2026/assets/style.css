@@ -1,0 +1,114 @@
+
+:root {
+    --sidebar-width: 350px; /* Increased width */
+    --navy-blue: #0a2240;
+    --gold: #f5c800;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1050;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    padding-top: 80px; /* Space for floating header */
+}
+
+.sidebar.collapsed {
+    transform: translateX(-100%);
+}
+
+.sidebar-header {
+    color: var(--navy-blue);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+    padding-left: 15px;
+    border-left: 4px solid var(--gold);
+}
+
+.menu-item {
+    padding: 12px 20px;
+    color: #4a5568;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    font-size: 0.95rem;
+    border-left: 3px solid transparent;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background-color: rgba(10, 34, 64, 0.05);
+    color: var(--navy-blue);
+    border-left: 3px solid var(--gold);
+    text-decoration: none;
+}
+
+.menu-item i {
+    margin-right: 12px;
+    font-size: 1.2rem;
+    color: var(--navy-blue);
+}
+
+/* Glass Effect Utilities */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-panel {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Dropdowns */
+.sidebar-dropdown .Select-control {
+    background-color: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+/* Text Utilities */
+.text-navy { color: var(--navy-blue); }
+.text-gold { color: var(--gold); }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+    background: #ccc; 
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #aaa; 
+}
+
+/* Map Containers */
+.map-detail-wrapper {
+    position: relative;
+    z-index: 10;
+}
