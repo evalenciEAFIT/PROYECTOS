@@ -1,4 +1,17 @@
-// ======= NAVEGACIÓN POR SECCIONES =======
+// ======= NAVEGACIÓN Y RED =======
+
+// Global Fetch Interceptor to log User sessions
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+    if (window.currentUser && window.currentUser.cuenta_eafit) {
+        let options = args[1] || {};
+        options.headers = options.headers || {};
+        // Add the user to track them in the Node Backend Logs
+        options.headers['x-user'] = window.currentUser.cuenta_eafit;
+        args[1] = options;
+    }
+    return originalFetch.apply(this, args);
+};
 const SECTIONS = ['resumen', 'movimientos', 'informe'];
 const SECTION_IDS = {
     resumen: ['userInfoCard', 'summary-cards-wrap', 'chartsSection', 'evolutionChartSection', 'accounts-section-wrap'],
@@ -107,6 +120,7 @@ window.renderAprobacionesTable = function () {
     let dFrom = fechaDesde ? new Date(fechaDesde + 'T00:00:00') : null;
     let dTo = fechaHasta ? new Date(fechaHasta + 'T23:59:59') : null;
     const filterEstado = document.getElementById('filterAprobEstado')?.value || '';
+    const filterCC = (document.getElementById('aprobFilterCC')?.value || '').toLowerCase().trim();
 
     let filtered = window._aproData.filter(tx => {
         if (filterEstado) {
@@ -121,6 +135,11 @@ window.renderAprobacionesTable = function () {
             const matchesNombre = (tx.nombre_cuenta || '').toLowerCase().includes(searchVal);
             const matchesCat = (tx.categoria || '').toLowerCase().includes(searchVal);
             if (!matchesNombre && !matchesCat) return false;
+        }
+
+        if (filterCC) {
+            const matchesCC = (tx.centro_costo || '').toLowerCase().includes(filterCC);
+            if (!matchesCC) return false;
         }
 
         let fStr = tx.fecha || '';
@@ -151,11 +170,14 @@ window.renderAprobacionesTable = function () {
         if (th.dataset.col === window._aproSort.col) th.classList.add(window._aproSort.dir === 'asc' ? 'sort-asc' : 'sort-desc');
     });
 
+    const isRoot = window.currentUser && window.currentUser.cuenta_eafit === 'root_ctei@eafit.edu.co';
+    const thAprobAdmin = document.getElementById('thAprobAdmin');
+    if (thAprobAdmin) thAprobAdmin.style.display = isRoot ? 'table-cell' : 'none';
+
     if (filtered.length === 0) {
         body.innerHTML = '';
         if (empty) empty.style.display = 'block';
     } else {
-        const isRoot = window.currentUser && window.currentUser.cuenta_eafit === 'root_ctei@eafit.edu.co';
         body.innerHTML = filtered.map(tx => {
             const monto = '$' + Number(tx.monto).toLocaleString('en-US');
 
@@ -198,22 +220,33 @@ window.renderAprobacionesTable = function () {
                 estadoHtml += getFlowButtonsHtml(tx.id, tx.estado, tx.historial_estados, isRoot);
 
                 estadoHtml += `</div>`;
+            }
 
-
+            let adminTd = '';
+            if (isRoot) {
+                adminTd = `<td style="text-align:center; vertical-align:middle;">
+                    <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+                        <button onclick="window.editTransactionAmount(${tx.id}, ${tx.monto})" style="background:var(--accent-light);color:var(--accent-color);border:1px solid rgba(26,58,143,0.2);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;transition:background 0.2s;width:100%;max-width:80px;">EDITAR</button>
+                        <button onclick="window.deleteTransactionData(${tx.id})" style="background:var(--expense-bg);color:var(--expense-color);border:1px solid rgba(192,57,43,0.2);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;transition:background 0.2s;width:100%;max-width:80px;">ELIMINAR</button>
+                    </div>
+                </td>`;
             }
 
             return `
                 <tr>
                     <td><div class="account-name">${tx.nombre_cuenta || '-'}</div></td>
+                    <td><div style="font-size:13px; font-weight:600; color:var(--text-secondary);">${tx.centro_costo || '-'}</div></td>
                     <td>
-                        <div>${tx.categoria || '-'}</div>
-                        ${tx.justificacion ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Ref: ${tx.justificacion}</div>` : ''}
+                        <div style="font-weight:500;color:var(--text-primary);">${tx.categoria || '-'}</div>
+                        ${tx.cuenta_vinculada ? `<div style="font-size:11px;color:var(--accent-color);font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);padding:2px 6px;border-radius:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Destino: ${tx.cuenta_vinculada}</div><br>` : ''}
+                        ${tx.justificacion ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;display:inline-block;">Ref: ${tx.justificacion}</div>` : ''}
                     </td>
                     <td class="amount-col val-expense">-${monto}</td>
                     <td><div style="font-size:13px;">${tx.fecha || '-'}</div></td>
                     <td style="text-align:center; vertical-align:middle;">
                         ${estadoHtml}
                     </td>
+                    ${adminTd}
                 </tr>
             `;
         }).join('');
@@ -223,14 +256,38 @@ window.renderAprobacionesTable = function () {
 
 window.exportarAprobExcel = function () {
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Cuenta Origen,Categoría,Justificación,Monto,Fecha Generación,Estado\n";
+    csvContent += "Cuenta Origen,Centro Costo,Categoría,Justificación,Monto,Fecha Generación,Estado\n";
 
     const fechaDesde = document.getElementById('aprobFechaDesde')?.value;
     const fechaHasta = document.getElementById('aprobFechaHasta')?.value;
     let dFrom = fechaDesde ? new Date(fechaDesde + 'T00:00:00') : null;
     let dTo = fechaHasta ? new Date(fechaHasta + 'T23:59:59') : null;
 
+    const searchVal = (document.getElementById('aprobSearchInput')?.value || '').toLowerCase().trim();
+    const filterEstado = document.getElementById('filterAprobEstado')?.value || '';
+    const filterCC = (document.getElementById('aprobFilterCC')?.value || '').toLowerCase().trim();
+
     let filtered = window._aproData.filter(tx => {
+        // Filter Estado
+        if (filterEstado) {
+            let txEstado = (tx.estado || '').toLowerCase();
+            if (txEstado === 'generado') txEstado = 'solicitada';
+            if (txEstado === 'aceptado') txEstado = 'aprobada';
+            if (txEstado === 'rechazado') txEstado = 'rechazada';
+            if (txEstado !== filterEstado) return false;
+        }
+        // Filter Search
+        if (searchVal) {
+            const matchesNombre = (tx.nombre_cuenta || '').toLowerCase().includes(searchVal);
+            const matchesCat = (tx.categoria || '').toLowerCase().includes(searchVal);
+            if (!matchesNombre && !matchesCat) return false;
+        }
+        // Filter CC
+        if (filterCC) {
+            const matchesCC = (tx.centro_costo || '').toLowerCase().includes(filterCC);
+            if (!matchesCC) return false;
+        }
+
         let fStr = tx.fecha || '';
         if (fStr.includes('T')) fStr = fStr.split('T')[0];
         else fStr = fStr.split(' ')[0];
@@ -255,6 +312,7 @@ window.exportarAprobExcel = function () {
     filtered.forEach(function (rowArray) {
         let row = [
             `"${(rowArray.nombre_cuenta || '').replace(/"/g, '""')}"`,
+            `"${(rowArray.centro_costo || '').replace(/"/g, '""')}"`,
             `"${(rowArray.categoria || '').replace(/"/g, '""')}"`,
             `"${(rowArray.justificacion || '').replace(/"/g, '""')}"`,
             rowArray.monto,
@@ -303,6 +361,7 @@ let _movSort = { col: 'fecha', dir: 'desc' };
 let _movPreset = 'all';
 
 async function loadMovimientosSection() {
+    window.loadMovimientosSection = loadMovimientosSection;
     if (!window.currentUser || !window.currentUser.id) return;
     const body = document.getElementById('movTableBody');
     const empty = document.getElementById('movEmpty');
@@ -401,6 +460,11 @@ function renderMovTable(txs) {
         return;
     }
     if (empty) empty.style.display = 'none';
+
+    const isRoot = window.currentUser && window.currentUser.cuenta_eafit === 'root_ctei@eafit.edu.co';
+    const thMovAdmin = document.getElementById('thMovAdmin');
+    if (thMovAdmin) thMovAdmin.style.display = isRoot ? 'table-cell' : 'none';
+
     body.innerHTML = '';
 
     filtered.forEach((tx) => {
@@ -416,7 +480,6 @@ function renderMovTable(txs) {
         const sign = isIng ? '+' : '−';
         const cuentaNombre = tx.nombre_cuenta || `Cta. #${tx.cuenta_id}`;
 
-        const isRoot = window.currentUser && window.currentUser.cuenta_eafit === 'root_ctei@eafit.edu.co';
         let estadoHtml = '—';
         if (tx.tipo === 'egreso' && tx.estado) {
             let color = '#f59e0b';
@@ -457,6 +520,16 @@ function renderMovTable(txs) {
             estadoHtml += `</div>`;
         }
 
+        let adminTd = '';
+        if (isRoot) {
+            adminTd = `<td style="text-align:center; vertical-align:middle;">
+                <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+                    <button onclick="window.editTransactionAmount(${tx.id}, ${tx.monto})" style="background:var(--accent-light);color:var(--accent-color);border:1px solid rgba(26,58,143,0.2);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;transition:background 0.2s;width:100%;max-width:80px;">EDITAR</button>
+                    <button onclick="window.deleteTransactionData(${tx.id})" style="background:var(--expense-bg);color:var(--expense-color);border:1px solid rgba(192,57,43,0.2);padding:4px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;transition:background 0.2s;width:100%;max-width:80px;">ELIMINAR</button>
+                </div>
+            </td>`;
+        }
+
         row.innerHTML = `
             <td>
                 <div style="font-size:13px;font-weight:600;color:var(--text-primary);white-space:nowrap;">${dp}</div>
@@ -464,11 +537,13 @@ function renderMovTable(txs) {
             </td>
             <td><span class="tx-badge ${tx.tipo}">${tx.tipo}</span></td>
             <td>
-               <div style="color:var(--text-secondary);font-size:13px;">${tx.categoria || '—'}</div>
-               ${tx.justificacion ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;max-width:250px;white-space:normal;">Ref: ${tx.justificacion}</div>` : ''}
+               <div style="color:var(--text-primary);font-size:13px;font-weight:500;">${tx.categoria || '—'}</div>
+               ${tx.cuenta_vinculada ? `<div style="font-size:11px;color:var(--accent-color);font-weight:600;margin-top:4px;display:inline-flex;align-items:center;gap:4px;background:var(--accent-light);padding:2px 6px;border-radius:4px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${tx.tipo === 'egreso' ? '<path d="M5 12h14M12 5l7 7-7 7"/>' : '<path d="M19 12H5M12 19l-7-7 7-7"/>'}</svg> ${tx.tipo === 'egreso' ? 'Destino' : 'Origen'}: ${tx.cuenta_vinculada}</div><br>` : ''}
+               ${tx.justificacion ? `<div style="font-size:11px;color:var(--text-muted);margin-top:3px;max-width:250px;white-space:normal;display:inline-block;">Ref: ${tx.justificacion}</div>` : ''}
             </td>
             <td style="text-align:right;font-size:14.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;" class="${aC}">${sign} $${(tx.monto || 0).toLocaleString('es-CO', { maximumFractionDigits: 0 })}</td>
             <td style="text-align:center;vertical-align:middle;">${estadoHtml}</td>
+            ${adminTd}
         `;
         body.appendChild(row);
     });
@@ -514,6 +589,7 @@ window.renderInformeTable = function () {
             html += `<tr style="${bgStyle}">
                 <td style="padding-left:${16 + indent}px;${fw}color:var(--text-primary);">
                     ${depth > 0 ? '<span style="color:var(--text-muted);margin-right:6px;">↳</span>' : ''}${a.nombre_cuenta}
+                    ${a.centro_costo ? `<div style="font-size:10.5px; color:var(--text-muted); font-weight:400; margin-top:2px;">Centro de Costo: ${a.centro_costo}</div>` : ''}
                 </td>
                 <td style="text-align:right;" class="val-income">$${(a.ingresos || 0).toLocaleString('es-CO', { maximumFractionDigits: 0 })}</td>
                 <td style="text-align:right;" class="val-expense">$${(a.egresos || 0).toLocaleString('es-CO', { maximumFractionDigits: 0 })}</td>
@@ -683,10 +759,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginError = document.getElementById('loginError');
     const navLogout = document.getElementById('navLogout');
 
-    // Inicialización MSAL
+    // Inicialización MSAL (La configuración maestra fue extraída a /js/azure-config.js)
     const msalConfig = {
-        auth: {
-            clientId: "TU_AZURE_CLIENT_ID", // Reemplazar con el ID de la app registrada en Azure
+        auth: window.AZURE_CONFIG || {
+            clientId: "TU_AZURE_CLIENT_ID",
             authority: "https://login.microsoftonline.com/common",
             redirectUri: window.location.origin
         }
@@ -844,8 +920,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (msalConfig.auth.clientId === "TU_AZURE_CLIENT_ID") {
-            loginError.innerHTML = "<b>Aviso de Sistema:</b> El SSO web requiere habilitación del servicio de directorio.<br><br>Por favor contacte a <b>evalenci@eafit.edu.co</b> para que registre o asigne el <i>Client ID</i> de Azure para esta plataforma.";
-            loginError.style.display = "block";
+            const testEmail = prompt("SIMULADOR AZURE (Modo de Desarrollo)\n\nLa plataforma detecta que no has configurado el Client ID del portal de Azure aún.\nPara no bloquear tu desarrollo, ingresa un correo electrónico (ej: evalenci@eafit.edu.co o root_ctei@eafit.edu.co) para simular el inicio de sesión vía directorio Microsoft:");
+            if (!testEmail) return;
+
+            try {
+                loginBtn.innerHTML = '<span class="loading-spinner" style="border-color:#fff;border-top-color:transparent;width:16px;height:16px;margin:0 auto;display:block;"></span>';
+                const res = await fetch('/api/azure-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: testEmail.toLowerCase().trim() })
+                });
+                
+                const data = await res.json();
+                if (data.error) {
+                    loginBtn.innerHTML = 'Ingresar';
+                    loginError.textContent = data.error;
+                    loginError.style.display = "block";
+                } else {
+                    await onLoginSuccess(data.data);
+                }
+            } catch(e) {
+                loginBtn.innerHTML = 'Ingresar';
+                loginError.textContent = "Error conectando al backend simulado.";
+                loginError.style.display = "block";
+            }
             return;
         }
 
@@ -947,6 +1045,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 populateSelect('editEscuela', 'escuela', '');
                 populateSelect('editArea', 'area', '');
                 populateSelect('editGrupo', 'grupo_investigacion', '');
+                document.getElementById('editCentroCosto').value = '';
             } else {
                 emailGroup.style.display = 'none';
                 document.getElementById('editNombre').value = targetAcc.nombre_cuenta || '';
@@ -955,6 +1054,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 populateSelect('editEscuela', 'escuela', targetAcc.escuela || '');
                 populateSelect('editArea', 'area', targetAcc.area || '');
                 populateSelect('editGrupo', 'grupo_investigacion', targetAcc.grupo_investigacion || '');
+                document.getElementById('editCentroCosto').value = targetAcc.centro_costo || '';
             }
         };
 
@@ -1008,7 +1108,8 @@ document.addEventListener('DOMContentLoaded', () => {
             tipo: document.getElementById('editTipo').value.trim(),
             escuela: document.getElementById('editEscuela').value.trim(),
             area: document.getElementById('editArea').value.trim(),
-            grupo_investigacion: document.getElementById('editGrupo').value.trim()
+            grupo_investigacion: document.getElementById('editGrupo').value.trim(),
+            centro_costo: document.getElementById('editCentroCosto').value.trim()
         };
 
         if (isNew) {
@@ -1202,6 +1303,8 @@ document.addEventListener('DOMContentLoaded', () => {
             categorias_egreso = newEgresos;
             categorias_transferencias = newTransferencias;
 
+            if (typeof fetchData === 'function') fetchData();
+
             success.textContent = "Categorías guardadas correctamente.";
             success.style.display = 'block';
             setTimeout(() => {
@@ -1222,8 +1325,20 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnGuardarCats')?.addEventListener('click', saveEditCats);
 
     // Acción de logout desde el dropdown
-    const doLogout = (e) => {
+    const doLogout = async (e) => {
         if (e) e.preventDefault();
+        
+        // Registrar silenciosamente abandono de sesión en Auditoría antes de limpiar currentUser
+        if (window.currentUser) {
+            try {
+                await fetch('/api/logout', { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event: 'logout_manual' })
+                });
+            } catch(error) {}
+        }
+
         currentUser = null;
         window.currentUser = null;
         loginEmail.value = '';
@@ -1500,6 +1615,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ingresoAmount').value = '';
         document.getElementById('ingresoReferencia').value = '';
         document.getElementById('ingresoMsg').style.display = 'none';
+
+        // Poblado de categorías dinámico
+        const catSelect = document.getElementById('ingresoCategory');
+        if (catSelect) {
+            catSelect.innerHTML = '';
+            categorias_ingreso.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                catSelect.appendChild(opt);
+            });
+        }
 
         const now = new Date();
         const tzOffset = now.getTimezoneOffset() * 60000;
@@ -3000,4 +3127,233 @@ window.imprimirTicket = async function (txId) {
     } else {
         alert("Por favor permita las ventanas emergentes (pop-ups) para generar el PDF.");
     }
+};
+
+window.editTransactionAmount = async function(id, currentAmount) {
+    if (!window.currentUser || window.currentUser.cuenta_eafit !== 'root_ctei@eafit.edu.co') return;
+
+    const val = await window.asyncPrompt('Editar Monto', 'Modifica el monto de este movimiento. Si corresponde a una transferencia, el sistema ajustará automáticamente ambas cuentas.', `$${currentAmount.toLocaleString('es-CO')}`);
+    if (val === null || val.trim() === '') return;
+    
+    // Parse Colombian currency formatting: dots for thousands, commas for decimals
+    let cleanVal = val.replace(/\./g, '');         // Remove thousands dots
+    cleanVal = cleanVal.replace(/,/g, '.');          // Convert decimal comma to dot
+    const floatVal = parseFloat(cleanVal);
+    
+    if (isNaN(floatVal) || floatVal < 0) {
+        alert('Monto inválido.');
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/transacciones/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ monto: floatVal })
+        });
+        const d = await res.json();
+        if (d.error) throw new Error(d.error);
+        
+        // Headless refresh to maintain Root Session active
+        if (window.fetchData) window.fetchData();
+        if (window.loadAprobacionesSection) window.loadAprobacionesSection();
+        if (window.loadMovimientosSection) window.loadMovimientosSection();
+    } catch(e) {
+        alert("Error editando monto: " + e.message);
+    }
+};
+
+window.deleteTransactionData = async function(id) {
+    if (!window.currentUser || window.currentUser.cuenta_eafit !== 'root_ctei@eafit.edu.co') return;
+
+    const confirmed = await window.asyncConfirm('¿Eliminar transacción?', 'Se borrará físicamente el registro (y sus clones en la cuenta destino si aplica). Esta acción recalculará los totales permanentemente y no se puede deshacer.');
+    if (!confirmed) return;
+
+    try {
+        const res = await fetch(`/api/transacciones/${id}`, {
+            method: 'DELETE'
+        });
+        const d = await res.json();
+        if (d.error) throw new Error(d.error);
+
+        // Headless refresh to maintain Root Session active
+        if (window.fetchData) window.fetchData();
+        if (window.loadAprobacionesSection) window.loadAprobacionesSection();
+        if (window.loadMovimientosSection) window.loadMovimientosSection();
+    } catch(e) {
+        alert("Error eliminando transacción: " + e.message);
+    }
+};
+
+window.asyncPrompt = function(title, message, defaultValue) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15,23,42,0.5); backdrop-filter: blur(4px);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s ease-out;
+        `;
+        
+        const card = document.createElement('div');
+        card.style.cssText = `
+            background: #fff; border-radius: 16px; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            width: 400px; max-width: 90%; overflow: hidden;
+            transform: translateY(15px) scale(0.95); opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        `;
+        
+        card.innerHTML = `
+            <div style="padding:24px;border-bottom:1px solid #f1f5f9;">
+                <h3 style="margin:0;font-size:18px;font-weight:700;color:#0f172a;display:flex;align-items:center;gap:10px;">
+                    <div style="background:var(--accent-light);color:var(--accent-color);border-radius:8px;padding:6px;display:flex;align-items:center;justify-content:center;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    </div>
+                    ${title}
+                </h3>
+                <p style="margin:10px 0 0;font-size:13.5px;color:#64748b;line-height:1.5;">${message}</p>
+            </div>
+            <div style="padding:24px;">
+                <input type="text" id="promptInputVal" value="${defaultValue}" style="width:100%;padding:12px 16px;border:1px solid #cbd5e1;border-radius:8px;font-size:16px;font-weight:500;color:#1e293b;outline:none;transition:border-color 0.2s, box-shadow 0.2s; box-sizing:border-box;" autocomplete="off" />
+            </div>
+            <div style="padding:16px 24px;background:#f8fafc;display:flex;justify-content:flex-end;gap:12px;border-top:1px solid #e2e8f0;">
+                <button id="promptCancelBtn" style="padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;background:#e2e8f0;color:#475569;cursor:pointer;transition:all 0.2s;">Cancelar</button>
+                <button id="promptConfirmBtn" style="padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:600;border:none;background:var(--accent-color,#3b82f6);color:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px rgba(59,130,246,0.3);">Guardar</button>
+            </div>
+        `;
+
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+            card.style.opacity = '1';
+        });
+
+        const inputEl = card.querySelector('#promptInputVal');
+        const btnCancel = card.querySelector('#promptCancelBtn');
+        const btnConfirm = card.querySelector('#promptConfirmBtn');
+
+        inputEl.addEventListener('focus', () => {
+            inputEl.style.borderColor = 'var(--accent-color)';
+            inputEl.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.15)';
+        });
+        inputEl.addEventListener('blur', () => {
+            inputEl.style.borderColor = '#cbd5e1';
+            inputEl.style.boxShadow = 'none';
+        });
+
+        setTimeout(() => {
+            inputEl.focus();
+            inputEl.setSelectionRange(0, inputEl.value.length);
+        }, 200);
+
+        const close = (val) => {
+            overlay.style.opacity = '0';
+            card.style.transform = 'translateY(10px) scale(0.95)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                if (document.body.contains(overlay)) document.body.removeChild(overlay);
+                resolve(val);
+            }, 200);
+        };
+
+        btnCancel.addEventListener('click', () => close(null));
+        btnCancel.onmouseover = () => btnCancel.style.background = '#cbd5e1';
+        btnCancel.onmouseout = () => btnCancel.style.background = '#e2e8f0';
+        
+        btnConfirm.addEventListener('click', () => close(inputEl.value));
+        btnConfirm.onmouseover = () => btnConfirm.style.transform = 'translateY(-1px)';
+        btnConfirm.onmouseout = () => btnConfirm.style.transform = 'translateY(0)';
+
+        inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') close(inputEl.value);
+            if (e.key === 'Escape') close(null);
+        });
+    });
+};
+
+window.asyncConfirm = function(title, message) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15,23,42,0.5); backdrop-filter: blur(4px);
+            z-index: 9999; display: flex; align-items: center; justify-content: center;
+            opacity: 0; transition: opacity 0.2s ease-out;
+        `;
+        
+        const card = document.createElement('div');
+        card.style.cssText = `
+            background: #fff; border-radius: 16px; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            width: 400px; max-width: 90%; overflow: hidden;
+            transform: translateY(15px) scale(0.95); opacity: 0;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        `;
+        
+        card.innerHTML = `
+            <div style="padding:32px 24px 24px;text-align:center;">
+                <div style="width:56px;height:56px;background:rgba(239, 68, 68, 0.1);color:#ef4444;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </div>
+                <h3 style="margin:0;font-size:19px;font-weight:700;color:#0f172a;">
+                    ${title}
+                </h3>
+                <p style="margin:12px 0 0;font-size:14px;color:#64748b;line-height:1.6;">${message}</p>
+            </div>
+            <div style="padding:16px 24px;background:#f8fafc;display:flex;justify-content:center;gap:12px;border-top:1px solid #e2e8f0;">
+                <button id="confirmCancelBtn" style="padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;background:#e2e8f0;color:#475569;cursor:pointer;transition:all 0.2s;">Cancelar</button>
+                <button id="confirmAcceptBtn" style="padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;border:none;background:#ef4444;color:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 12px rgba(239,68,68,0.2);">Eliminar</button>
+            </div>
+        `;
+
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            card.style.transform = 'translateY(0) scale(1)';
+            card.style.opacity = '1';
+        });
+
+        const btnCancel = card.querySelector('#confirmCancelBtn');
+        const btnAccept = card.querySelector('#confirmAcceptBtn');
+
+        btnCancel.onmouseover = () => btnCancel.style.background = '#cbd5e1';
+        btnCancel.onmouseout = () => btnCancel.style.background = '#e2e8f0';
+        
+        btnAccept.onmouseover = () => {
+            btnAccept.style.background = '#dc2626';
+            btnAccept.style.transform = 'translateY(-1px)';
+        };
+        btnAccept.onmouseout = () => {
+            btnAccept.style.background = '#ef4444';
+            btnAccept.style.transform = 'translateY(0)';
+        };
+
+        const close = (val) => {
+            overlay.style.opacity = '0';
+            card.style.transform = 'translateY(10px) scale(0.95)';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                if (document.body.contains(overlay)) document.body.removeChild(overlay);
+                resolve(val);
+            }, 200);
+        };
+
+        btnCancel.addEventListener('click', () => close(false));
+        btnAccept.addEventListener('click', () => close(true));
+        
+        setTimeout(() => btnCancel.focus(), 200);
+
+        window.addEventListener('keydown', function onKey(e) {
+            if (e.key === 'Escape') {
+                window.removeEventListener('keydown', onKey);
+                close(false);
+            }
+        });
+    });
 };

@@ -64,7 +64,8 @@ def initialize_database():
             nombre_docente TEXT,
             area TEXT,
             escuela TEXT,
-            grupo_investigacion TEXT
+            grupo_investigacion TEXT,
+            centro_costo TEXT
         )
     ''')
 
@@ -121,9 +122,9 @@ def initialize_database():
 
         cursor.execute('''
             INSERT INTO cuenta (cuenta_eafit, nombre_cuenta, tipo, saldo, ingresos, egresos,
-                                documento, nombre_docente, area, escuela, grupo_investigacion)
-            VALUES (?, ?, ?, 0, 0, 0, ?, ?, ?, ?, ?)
-        ''', (cuenta_eafit, nombre_cuenta, tipo_cuenta, documento, nombre_doc, area, escuela, grupo))
+                                documento, nombre_docente, area, escuela, grupo_investigacion, centro_costo)
+            VALUES (?, ?, ?, 0, 0, 0, ?, ?, ?, ?, ?, ?)
+        ''', (cuenta_eafit, nombre_cuenta, tipo_cuenta, documento, nombre_doc, area, escuela, grupo, None))
 
         cuenta_id = cursor.lastrowid
         email_to_id[cuenta_eafit.lower().strip()] = cuenta_id

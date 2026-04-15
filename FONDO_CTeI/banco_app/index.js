@@ -41,6 +41,23 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Logger de Auditoría de Operaciones
+app.use((req, res, next) => {
+    if (['POST', 'PUT', 'DELETE'].includes(req.method)) {
+        const timestamp = new Date().toLocaleString('es-CO');
+        const b = { ...req.body };
+        if (b.password) b.password = '********';
+        if (b.token) b.token = '********';
+        if (b.clave) b.clave = '********';
+        const user = req.headers['x-user'] || 'Usuario Desconocido';
+        const logContent = `[${timestamp}] [USER: ${user}] ${req.method} ${req.originalUrl} | DATA: ${JSON.stringify(b)}\n`;
+        require('fs').appendFile(path.join(__dirname, 'operaciones.log'), logContent, (err) => {
+            if (err) console.error('Error escribiendo log:', err);
+        });
+    }
+    next();
+});
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/views', express.static(path.join(__dirname, 'views')));
 
@@ -60,10 +77,21 @@ const db = new sqlite3.Database(dbPath, (err) => {
         db.run('ALTER TABLE transaccion ADD COLUMN historial_estados TEXT', (err) => {
              // Silently ignore if column exists
         });
+        db.run('ALTER TABLE cuenta ADD COLUMN centro_costo TEXT', (err) => {
+             // Silently ignore if column exists
+        });
     }
 });
 
 // --- API Routes ---
+app.get('/api/logs', (req, res) => {
+    const logPath = path.resolve(__dirname, 'operaciones.log');
+    if (!fs.existsSync(logPath)) {
+        return res.status(404).send('No hay operaciones registradas en el sistema aún.');
+    }
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    res.download(logPath, `Auditoria_FONDO_CTeI_${timestamp}.log`);
+});
 
 app.get('/api/backup-db', (req, res) => {
     const backupPath = path.resolve(__dirname, 'banco.db');
@@ -157,6 +185,11 @@ app.post('/api/login', (req, res) => {
             res.json({ message: 'success', data: row });
         });
     }
+});
+
+// Endpoint silencioso para registrar formalmente el cierre de sesión en Auditoría
+app.post('/api/logout', (req, res) => {
+    res.json({ message: 'Sesion cerrada' });
 });
 
 // Azure SSO Login (Solo verifica existencia de cuenta ya que Azure valida identidad)
@@ -316,7 +349,11 @@ app.post('/api/cuentas/:id/transaccion', (req, res) => {
 // Get transactions for a specific account
 app.get('/api/cuentas/:id/transacciones', (req, res) => {
     const cuenta_id = req.params.id;
-    const sql = 'SELECT * FROM transaccion WHERE cuenta_id = ? ORDER BY fecha DESC';
+    const sql = `
+        SELECT t.*, 
+        (SELECT c2.nombre_cuenta FROM transaccion t2 JOIN cuenta c2 ON c2.id = t2.cuenta_id WHERE t2.categoria = t.categoria AND t2.tipo != t.tipo AND t2.fecha = t.fecha AND t2.monto = t.monto AND t2.id != t.id LIMIT 1) as cuenta_vinculada
+        FROM transaccion t WHERE t.cuenta_id = ? ORDER BY t.fecha DESC
+    `;
     db.all(sql, [cuenta_id], (err, rows) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -331,13 +368,15 @@ app.get('/api/cuentas/:id/transacciones', (req, res) => {
 // Get all transactions for a specific context (for charts - ASC)
 app.get('/api/transacciones', (req, res) => {
     const cuentaId = req.query.cuenta_id;
-    let sql = 'SELECT * FROM transaccion';
+    let sql = `SELECT t.*,
+               (SELECT c2.nombre_cuenta FROM transaccion t2 JOIN cuenta c2 ON c2.id = t2.cuenta_id WHERE t2.categoria = t.categoria AND t2.tipo != t.tipo AND t2.fecha = t.fecha AND t2.monto = t.monto AND t2.id != t.id LIMIT 1) as cuenta_vinculada
+               FROM transaccion t`;
     let params = [];
     if (cuentaId && cuentaId !== 'null') {
-        sql += ' WHERE cuenta_id = ?';
+        sql += ' WHERE t.cuenta_id = ?';
         params.push(cuentaId);
     }
-    sql += ' ORDER BY fecha ASC';
+    sql += ' ORDER BY t.fecha ASC';
     db.all(sql, params, (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'success', data: rows });
@@ -367,7 +406,9 @@ app.get('/api/movimientos', (req, res) => {
     db.all('SELECT cabecera_id, dependiente_id FROM jerarquia', [], (err, jRows) => {
         if (err) return res.status(500).json({ error: err.message });
 
-        let sql = `SELECT t.*, c.nombre_cuenta FROM transaccion t
+        let sql = `SELECT t.*, c.nombre_cuenta, c.centro_costo,
+                   (SELECT c2.nombre_cuenta FROM transaccion t2 JOIN cuenta c2 ON c2.id = t2.cuenta_id WHERE t2.categoria = t.categoria AND t2.tipo != t.tipo AND t2.fecha = t.fecha AND t2.monto = t.monto AND t2.id != t.id LIMIT 1) as cuenta_vinculada
+                   FROM transaccion t
                    LEFT JOIN cuenta c ON c.id = t.cuenta_id`;
         let params = [];
 
@@ -486,6 +527,111 @@ app.put('/api/transacciones/:id/estado', (req, res) => {
         });
     });
 });
+
+// Helper for recalculating balances after an edit or delete
+function recalculateBalancesForCuenta(cuenta_id, cb) {
+    const sql = `
+        SELECT 
+            SUM(CASE WHEN tipo = 'ingreso' THEN monto ELSE 0 END) AS total_ingresos,
+            SUM(CASE WHEN tipo = 'egreso' THEN monto ELSE 0 END) AS total_egresos
+        FROM transaccion
+        WHERE cuenta_id = ? AND (estado IS NULL OR estado NOT IN ('rechazado', 'rechazada'))
+    `;
+    db.get(sql, [cuenta_id], (err, res) => {
+        if (err) return cb(err);
+        const newIngresos = res.total_ingresos || 0;
+        const newEgresos = res.total_egresos || 0;
+        const newSaldo = newIngresos - newEgresos;
+        db.run('UPDATE cuenta SET ingresos = ?, egresos = ?, saldo = ? WHERE id = ?', 
+               [newIngresos, newEgresos, newSaldo, cuenta_id], (err2) => {
+            if (err2) return cb(err2);
+            notifyClients();
+            cb(null, { ingresos: newIngresos, egresos: newEgresos, saldo: newSaldo });
+        });
+    });
+}
+
+// Edit transaction amount (Root only conceptually, validated on frontend)
+app.put('/api/transacciones/:id', (req, res) => {
+    const txId = req.params.id;
+    const { monto } = req.body;
+    
+    if (monto === undefined || isNaN(monto)) {
+        return res.status(400).json({ error: 'Monto inválido' });
+    }
+
+    db.get('SELECT * FROM transaccion WHERE id = ?', [txId], (err, tx) => {
+        if (err || !tx) return res.status(404).json({ error: 'Transacción no encontrada' });
+
+        // Companion finding logic: Since transfers are saved as independent rows 
+        // with the exact same fecha, categoria, and monto but opposite tipo
+        const companionSql = `
+            SELECT id, cuenta_id FROM transaccion 
+            WHERE categoria = ? AND tipo != ? AND fecha = ? AND monto = ? AND id != ?
+        `;
+        db.get(companionSql, [tx.categoria, tx.tipo, tx.fecha, tx.monto, tx.id], (errComp, companion) => {
+            
+            db.serialize(() => {
+                db.run('BEGIN TRANSACTION');
+                
+                db.run('UPDATE transaccion SET monto = ? WHERE id = ?', [parseFloat(monto), txId]);
+                if (companion) {
+                    db.run('UPDATE transaccion SET monto = ? WHERE id = ?', [parseFloat(monto), companion.id]);
+                }
+                
+                db.run('COMMIT', (errCommit) => {
+                    if (errCommit) return res.status(500).json({ error: errCommit.message });
+                    
+                    recalculateBalancesForCuenta(tx.cuenta_id, (errRecalc) => {
+                        if (companion) {
+                            recalculateBalancesForCuenta(companion.cuenta_id, () => res.json({ message: 'success' }));
+                        } else {
+                            res.json({ message: 'success' });
+                        }
+                    });
+                });
+            });
+        });
+    });
+});
+
+// Delete transaction (Root only)
+app.delete('/api/transacciones/:id', (req, res) => {
+    const txId = req.params.id;
+
+    db.get('SELECT * FROM transaccion WHERE id = ?', [txId], (err, tx) => {
+        if (err || !tx) return res.status(404).json({ error: 'Transacción no encontrada' });
+
+        const companionSql = `
+            SELECT id, cuenta_id FROM transaccion 
+            WHERE categoria = ? AND tipo != ? AND fecha = ? AND monto = ? AND id != ?
+        `;
+        db.get(companionSql, [tx.categoria, tx.tipo, tx.fecha, tx.monto, tx.id], (errComp, companion) => {
+            
+            db.serialize(() => {
+                db.run('BEGIN TRANSACTION');
+                
+                db.run('DELETE FROM transaccion WHERE id = ?', [txId]);
+                if (companion) {
+                    db.run('DELETE FROM transaccion WHERE id = ?', [companion.id]);
+                }
+                
+                db.run('COMMIT', (errCommit) => {
+                    if (errCommit) return res.status(500).json({ error: errCommit.message });
+                    
+                    recalculateBalancesForCuenta(tx.cuenta_id, (errRecalc) => {
+                        if (companion) {
+                            recalculateBalancesForCuenta(companion.cuenta_id, () => res.json({ message: 'success' }));
+                        } else {
+                            res.json({ message: 'success' });
+                        }
+                    });
+                });
+            });
+        });
+    });
+});
+
 // Create new account
 app.post('/api/cuentas', (req, res) => {
     const { cuenta_eafit, nombre_cuenta, documento, tipo, escuela, area, grupo_investigacion } = req.body;
@@ -495,10 +641,10 @@ app.post('/api/cuentas', (req, res) => {
     const ingresos = 0.0;
     const egresos = 0.0;
     
-    const sql = `INSERT INTO cuenta (cuenta_eafit, nombre_cuenta, tipo, saldo, ingresos, egresos, documento, nombre_docente, area, escuela, grupo_investigacion) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    db.run(sql, [cuenta_eafit, nombre_cuenta, tipo, saldo, ingresos, egresos, documento, nombre_cuenta, area, escuela, grupo_investigacion], function(err) {
+    const sql = `INSERT INTO cuenta (cuenta_eafit, nombre_cuenta, tipo, saldo, ingresos, egresos, documento, nombre_docente, area, escuela, grupo_investigacion, centro_costo) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+const { centro_costo } = req.body;
+    db.run(sql, [cuenta_eafit, nombre_cuenta, tipo, saldo, ingresos, egresos, documento, nombre_cuenta, area, escuela, grupo_investigacion, centro_costo], function(err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -515,13 +661,13 @@ app.post('/api/cuentas', (req, res) => {
 // Update account details
 app.put('/api/cuentas/:id', (req, res) => {
     const cuentaId = req.params.id;
-    const { nombre_cuenta, documento, tipo, escuela, area, grupo_investigacion } = req.body;
+    const { nombre_cuenta, documento, tipo, escuela, area, grupo_investigacion, centro_costo } = req.body;
 
     const sql = `UPDATE cuenta 
-                 SET nombre_cuenta = ?, documento = ?, tipo = ?, escuela = ?, area = ?, grupo_investigacion = ?
+                 SET nombre_cuenta = ?, documento = ?, tipo = ?, escuela = ?, area = ?, grupo_investigacion = ?, centro_costo = ?
                  WHERE id = ?`;
     
-    db.run(sql, [nombre_cuenta, documento, tipo, escuela, area, grupo_investigacion, cuentaId], function(err) {
+    db.run(sql, [nombre_cuenta, documento, tipo, escuela, area, grupo_investigacion, centro_costo, cuentaId], function(err) {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
